@@ -1,0 +1,3 @@
+GET    /               controllers.Application.index
+GET    /other/:info    controllers.Application.other(info: String)
+GET    /sim/:num       controllers.Application.sim(num: Long)
