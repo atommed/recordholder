@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nginx test</title>
+</head>
+<body>
+lol!
+<script>
+var ws_url = 'wss://' + window.location.host + '/ws/'
+var ws = new WebSocket(ws_url,"echo-protocol")
+ws.onopen = function(evInfo){
+    ws.send("O, privet")
+}
+</script>
+</body>
+</html>
