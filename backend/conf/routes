@@ -1,3 +1,5 @@
-GET    /               controllers.Application.index
-GET    /other/:info    controllers.Application.other(info: String)
-GET    /sim/:num       controllers.Application.sim(num: Long)
+GET    /api/               controllers.Application.index
+GET    /api/other/:info    controllers.Application.other(info: String)
+GET    /api/sim/:num       controllers.Application.sim(num: Long)
+GET    /wsapi/test         controllers.Application.socket
+
