@@ -6,10 +6,14 @@
 <body>
 lol!
 <script>
-var ws_url = 'wss://' + window.location.host + '/ws/'
+var ws_url = 'wss://' + window.location.host + '/wsapi/test'
 var ws = new WebSocket(ws_url,"echo-protocol")
 ws.onopen = function(evInfo){
     ws.send("O, privet")
+}
+ws.onmessage = function(msgEvent){
+   var user_answer = prompt(msgEvent.data);
+   ws.send(user_answer);
 }
 </script>
 </body>
