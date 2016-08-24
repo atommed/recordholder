@@ -5,7 +5,17 @@
 
 #define ERR_NO_STREAM (-1)
 
+void print_metadata_entry(AVDictionaryEntry *tag){
+}
+
 void dump_metadata(AVFormatContext* fmt){
+	AVDictionaryEntry *tag = NULL;
+	while(tag = av_dict_get(fmt->metadata, 
+			 	 "",
+				 tag,
+				 AV_DICT_IGNORE_SUFFIX)){
+		printf("'%s' = '%s'\n", tag->key, tag->value);
+	}		
 }
 
 int save_cover_art(AVFormatContext* ifmt,char *filename){

@@ -1,2 +1,2 @@
 analyzer: analyzer.c
-	gcc -o analyzer analyzer.c -lavformat -lavcodec
+	gcc -o analyzer analyzer.c -lavformat -lavcodec -lavutil
