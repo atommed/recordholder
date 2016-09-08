@@ -5,16 +5,47 @@
 
 #define ERR_NO_STREAM (-1)
 
+/**
+ *Escape format:
+ * newline => \n
+ * \ => \\
+ * = => \=
+ */
+void print_escaped(char* s){
+	do{
+		switch(*s){
+			case '\n':
+				putchar('\\');
+				putchar('n');
+				break;
+			case '\\': 
+				putchar('\\');
+				putchar('\\');
+				break;
+			case '=' : 
+				putchar('\\');
+				putchar('=');
+				break;
+			default: putchar(*s);break;
+		}
+
+	} while(*s++);
+}
+
 void print_metadata_entry(AVDictionaryEntry *tag){
+	print_escaped(tag->key);
+	putchar('=');
+	print_escaped(tag->value);
+	putchar('\n');
 }
 
 void dump_metadata(AVFormatContext* fmt){
 	AVDictionaryEntry *tag = NULL;
 	while(tag = av_dict_get(fmt->metadata, 
-			 	 "",
-				 tag,
-				 AV_DICT_IGNORE_SUFFIX)){
-		printf("'%s' = '%s'\n", tag->key, tag->value);
+				"",
+				tag,
+				AV_DICT_IGNORE_SUFFIX)){
+		print_metadata_entry(tag);
 	}		
 }
 
@@ -25,8 +56,8 @@ int save_cover_art(AVFormatContext* ifmt,char *filename){
 	AVPacket pkt;
 
 	if((cover_stream_id = av_find_best_stream(ifmt,
-					          AVMEDIA_TYPE_VIDEO,
-						  -1,-1,NULL, 0)) < 0){
+					AVMEDIA_TYPE_VIDEO,
+					-1,-1,NULL, 0)) < 0){
 		fputs("Can't find cover stream\n", stderr);
 		ret = 0;
 		goto end;
@@ -83,9 +114,9 @@ int main(int argc, char **argv){
 	/*Check input args*/
 	if(argc != 3){
 		fprintf(stderr,
-			"Usage: %s <file name> <out_cover_name>\n"
-			"Get metadata and extract album art from audio\n"
-			"\n", argv[0]);
+				"Usage: %s <file name> <out_cover_name>\n"
+				"Get metadata and extract album art from audio\n"
+				"\n", argv[0]);
 		exit(EXIT_FAILURE);		
 	}
 	file_name = argv[1];
@@ -108,7 +139,7 @@ int main(int argc, char **argv){
 	}
 
 	dump_metadata(ifmt);
-	save_cover_art(ifmt, out_cover_name);
+	ret = save_cover_art(ifmt, out_cover_name);
 
 end:
 	avformat_close_input(&ifmt);
