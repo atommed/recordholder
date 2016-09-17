@@ -46,8 +46,33 @@ class ByteBuffer{
 
 public class AudioMetadataExtractor {
     public static class MetadataExtractionResult{
+        private boolean hasCover;
         private Map<String, String> metadata;
         private String errorLog;
+        private int exitCode;
+
+        public MetadataExtractionResult(boolean hasCover, Map<String, String> metadata, String errorLog, int exitCode) {
+            this.hasCover = hasCover;
+            this.metadata = metadata;
+            this.errorLog = errorLog;
+            this.exitCode = exitCode;
+        }
+
+        public boolean isCoverExtracted() {
+            return hasCover;
+        }
+
+        public Map<String, String> getMetadata() {
+            return metadata;
+        }
+
+        public String getErrorLog() {
+            return errorLog;
+        }
+
+        public int getExitCode() {
+            return exitCode;
+        }
     }
 
     private String extractorExecutable;
@@ -92,9 +117,17 @@ public class AudioMetadataExtractor {
         return metadata;
     }
 
-    public void extractMetadata(File f) throws IOException {
+    //Extractor exit code 0 means everything is Ok, 1 means everything is ok but cover not found
+    public MetadataExtractionResult extractMetadata(File f) throws IOException, InterruptedException {
         String filePath = f.getAbsolutePath();
         ProcessBuilder pb = new ProcessBuilder(extractorExecutable, filePath, coverPath);
         Process p = pb.start();
+        int exitCode = p.waitFor();
+
+        String errorLog = ByteBuffer.readStringToEnd(p.getErrorStream(), StandardCharsets.UTF_8);
+        if(exitCode != 0 && exitCode != 1)
+            return new MetadataExtractionResult(false, null, errorLog, exitCode);
+        Map<String, String> metadata = getMetadata(p.getInputStream());
+        return new MetadataExtractionResult(exitCode == 0, metadata, errorLog, exitCode);
     }
 }

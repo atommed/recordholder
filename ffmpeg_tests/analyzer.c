@@ -15,7 +15,7 @@
  * = => \=
  */
 void print_escaped(char* s){
-	do{
+	while(*s){
 		switch(*s){
 			case '\n':
 				putchar('\\');
@@ -31,8 +31,8 @@ void print_escaped(char* s){
 				break;
 			default: putchar(*s);break;
 		}
-
-	} while(*s++);
+		s++;
+	}
 }
 
 void print_metadata_entry(AVDictionaryEntry *tag){
