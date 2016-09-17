@@ -3,7 +3,10 @@
 
 #include <libavformat/avformat.h>
 
-#define ERR_NO_STREAM (-1)
+#define ERR_NO_STREAM (3)
+#define ERR_BAD_USAGE (2)
+#define OK_NO_COVER_STREAM (1)
+
 
 /**
  *Escape format:
@@ -59,7 +62,7 @@ int save_cover_art(AVFormatContext* ifmt,char *filename){
 					AVMEDIA_TYPE_VIDEO,
 					-1,-1,NULL, 0)) < 0){
 		fputs("Can't find cover stream\n", stderr);
-		ret = 0;
+		ret = OK_NO_COVER_STREAM;
 		goto end;
 	}
 	in_stream = ifmt->streams[cover_stream_id];
@@ -117,7 +120,7 @@ int main(int argc, char **argv){
 				"Usage: %s <file name> <out_cover_name>\n"
 				"Get metadata and extract album art from audio\n"
 				"\n", argv[0]);
-		exit(EXIT_FAILURE);		
+		exit(ERR_BAD_USAGE);		
 	}
 	file_name = argv[1];
 	out_cover_name = argv[2];
@@ -125,7 +128,7 @@ int main(int argc, char **argv){
 
 	/*Create context*/
 	if((ret = avformat_open_input(&ifmt, file_name, NULL, NULL)) < 0){
-		fprintf(stderr, "Can't open input file %s", file_name);
+		fprintf(stderr, "Can't open input file %s\n", file_name);
 		goto end;
 	}
 	if((ret = avformat_find_stream_info(ifmt, NULL)) < 0){
