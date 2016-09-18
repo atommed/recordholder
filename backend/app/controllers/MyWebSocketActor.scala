@@ -7,9 +7,8 @@ object MyWebSocketActor{
 
 class MyWebSocketActor(out: ActorRef) extends Actor{
   override def receive: Receive = {
-    case msg: String => {
+    case msg: String =>
       println(msg)
-      out ! s"I got ur msge: $msg"
-    }
+      out ! s"I got ur msg: $msg"
   }
 }
