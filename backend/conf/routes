@@ -1,4 +1,5 @@
 GET    /api/               controllers.Application.index
+POST    /api/fileUpload     controllers.Application.fileUploadTest
 GET    /api/other/:info    controllers.Application.other(info: String)
 GET    /api/sim/:num       controllers.Application.sim(num: Long)
 GET    /wsapi/test         controllers.Application.socket
