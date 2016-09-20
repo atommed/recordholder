@@ -9,7 +9,7 @@
 		<div id="app_mount"></div>
 		<form enctype="multipart/form-data" method="post" name="fileinfo">
 			<label>File uploader</label><br>
-			<input type="file" name="music" required />
+			<input type="file" name="track" required />
 			<input type="submit" value="Upload file!" />
 		</form>
 		<div id="upload_result"></div>
@@ -24,7 +24,7 @@ form.addEventListener('submit', function(ev){
 		if(req.status == 200)
 			output.innerHTML = req.response
 		else
-			output.innerHTML = "Error " + req.status;
+			output.innerHTML = "Error " + req.status+":"+req.response;
 	}
 	req.send(oData);
 	ev.preventDefault()
