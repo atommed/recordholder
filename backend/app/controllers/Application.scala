@@ -8,9 +8,9 @@ import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 
 
-
-class Application @Inject() (implicit system: ActorSystem, materializer: Materializer) extends Controller {
+class Application @Inject()(implicit system: ActorSystem, materializer: Materializer) extends Controller {
   private var i: Int = 0
+
   def index = Action {
     Ok("It works!")
   }
@@ -21,7 +21,7 @@ class Application @Inject() (implicit system: ActorSystem, materializer: Materia
     Ok(s"This is ${42.0f / num}")
   }
 
-  def socket = WebSocket.accept[String,String](req =>
+  def socket = WebSocket.accept[String, String](req =>
     ActorFlow.actorRef(out => MyWebSocketActor.props(out))
   )
 }

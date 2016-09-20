@@ -19,8 +19,8 @@ public class MetadataRetrieverTest {
         MetadataRetriever extractor = new MetadataRetriever(workDir, analyzer);
         MetadataRetriever.Result result =
                 extractor.extractMetadata(f, "cover.jpg");
-        for (Map.Entry<String, String> p: result.getMetadata().entrySet()
-             ) {
+        for (Map.Entry<String, String> p : result.getMetadata().entrySet()
+                ) {
             System.out.println(p.getKey() + "=" + p.getValue());
         }
     }
