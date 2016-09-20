@@ -23,14 +23,14 @@ class TrackUploadController @Inject() (conf:Configuration) extends Controller {
 
   def handleUpload = Action(parse.multipartFormData){ request =>
     request.body.file(TrackUploadController.TRACK_FIELD_NAME).map(file=>{
-      /*val metadata = extractor.extractMetadata(
-        file.ref.file,
-        "cover.jpg"
-      )*/
-      val metadata = extractor.extractMetadata(file.ref.file,"cover.jpg")
-      val metadata_entries = for(entry <- metadata.getMetadata.entrySet())
-        yield entry.getKey + "=" + entry.getValue
-      Ok(metadata_entries.mkString("<br>"))
+      val result = extractor.extractMetadata(file.ref.file,"cover.jpg")
+      if(result.exitSuccesfully()) {
+        val metadata_entries = for (entry <- result.getMetadata.entrySet())
+          yield entry.getKey + "=" + entry.getValue
+        Ok(metadata_entries.mkString("<br>"))
+      } else {
+        BadRequest("Uploaded file can't be recognized as audio")
+      }
     }
     ).getOrElse(
       BadRequest("Request must contain track with name \""+

@@ -139,6 +139,10 @@ public class MetadataRetriever {
             return errorLog;
         }
 
+        public boolean exitSuccesfully(){
+            return exitCode == 0 || exitCode == 1;
+        }
+
         public int getExitCode() {
             return exitCode;
         }
