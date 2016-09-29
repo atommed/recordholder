@@ -27,7 +27,7 @@ class TrackUploadController @Inject()(conf: Configuration) extends Controller {
       if (result.exitSuccesfully()) {
         val metadata_entries = for (entry <- result.getMetadata.entrySet())
           yield entry.getKey + "=" + entry.getValue
-        Ok(metadata_entries.mkString("<br>"))
+        Ok(s"${result.getLength} ${result.getBitrate}<br> ${metadata_entries.mkString("<br>")}")
       } else {
         BadRequest("Uploaded file can't be recognized as audio")
       }

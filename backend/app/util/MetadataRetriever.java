@@ -1,5 +1,7 @@
 package util;
 
+import com.google.common.base.Charsets;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,17 +47,18 @@ class ByteBuffer {
 public class MetadataRetriever {
     private final Path workDir;
     private final String executable;
+    private ByteBuffer byteBuffer = new ByteBuffer();
 
     public MetadataRetriever(Path workDir, Path executable) {
         this.workDir = workDir;
         this.executable = executable.toAbsolutePath().toString();
     }
 
-    private static Map<String, String> getMetadata(InputStream s) throws IOException {
+    private Map<String, String> getMetadata(InputStream s) throws IOException {
         Map<String, String> metadata = new HashMap<>();
-        ByteBuffer byteBuffer = new ByteBuffer();
         String tmpKey = null, tmpVal;
         int n;
+        byteBuffer.clear();
 
         while ((n = s.read()) != -1) {
             switch (n) {
@@ -97,31 +100,49 @@ public class MetadataRetriever {
     //Extractor exit code 0 means everything is Ok, 1 means everything is ok but cover not found
     public Result extractMetadata(File f, String coverName)
             throws IOException, InterruptedException {
+        double length;
+        long bitrate;
+        int n;
         String filePath = f.getAbsolutePath();
         String coverPath = workDir.resolve(coverName).toAbsolutePath().toString();
         ProcessBuilder pb = new ProcessBuilder(executable, filePath, coverPath);
         Process p = pb.start();
         int exitCode = p.waitFor();
+        InputStream output = p.getInputStream();
 
         String errorLog = ByteBuffer.readStringToEnd(p.getErrorStream(), StandardCharsets.UTF_8);
         if (exitCode != 0 && exitCode != 1)
-            return new Result(false, null, errorLog, exitCode);
+            return new Result(exitCode, errorLog, false, 0, 0, null);
 
-        Map<String, String> metadata = getMetadata(p.getInputStream());
-        return new Result(exitCode == 0, metadata, errorLog, exitCode);
+        //Read length and bitrate
+        byteBuffer.clear();
+        while ((n = output.read()) != '\n') {
+            if (n == -1) throw new IllegalStateException("Stream ended while reading first line");
+            byteBuffer.put((byte) n);
+        }
+        {
+            String[] vals = byteBuffer.getString(Charsets.UTF_8).split(" ");
+            length = Double.parseDouble(vals[0]);
+            bitrate = Long.parseLong(vals[1]);
+        }
+
+        Map<String, String> metadata = getMetadata(output);
+        return new Result(exitCode, errorLog, exitCode == 0, length, bitrate, metadata);
     }
 
     public static class Result {
+        private final double length; //In seconds
+        private final long bitrate; //In kb
         private final boolean hasCover;
         private final Map<String, String> metadata;
         private final String errorLog;
         private final int exitCode;
 
-        public Result(boolean hasCover,
-                      Map<String, String> metadata,
-                      String errorLog,
-                      int exitCode) {
+        public Result(int exitCode, String errorLog, boolean hasCover,
+                      double length, long bitrate, Map<String, String> metadata) {
             this.hasCover = hasCover;
+            this.length = length;
+            this.bitrate = bitrate;
             this.metadata = metadata;
             this.errorLog = errorLog;
             this.exitCode = exitCode;
@@ -145,6 +166,14 @@ public class MetadataRetriever {
 
         public int getExitCode() {
             return exitCode;
+        }
+
+        public long getBitrate() {
+            return bitrate;
+        }
+
+        public double getLength() {
+            return length;
         }
     }
 }

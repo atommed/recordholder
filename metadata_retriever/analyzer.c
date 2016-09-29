@@ -44,10 +44,10 @@ void print_metadata_entry(AVDictionaryEntry *tag){
 
 void dump_metadata(AVFormatContext* fmt){
 	AVDictionaryEntry *tag = NULL;
-	while(tag = av_dict_get(fmt->metadata, 
+	while((tag = av_dict_get(fmt->metadata, 
 				"",
 				tag,
-				AV_DICT_IGNORE_SUFFIX)){
+				AV_DICT_IGNORE_SUFFIX))){
 		print_metadata_entry(tag);
 	}		
 }
@@ -109,6 +109,15 @@ end:
 	return ret;
 }
 
+/*Prints length in seconds and bitrate*/
+void print_track_info(AVFormatContext* fmt){
+	int best_audio_stream_id;
+	AVStream* s;
+        best_audio_stream_id = av_find_best_stream(fmt, AVMEDIA_TYPE_AUDIO, -1, -1, NULL, 0);
+	s = fmt->streams[best_audio_stream_id];
+	printf("%.3f %"PRId64"\n",s->duration * av_q2d(s->time_base),fmt->bit_rate/1000l);
+}
+
 int main(int argc, char **argv){
 	AVFormatContext *ifmt = NULL;
 	char *file_name, *out_cover_name;
@@ -140,7 +149,7 @@ int main(int argc, char **argv){
 		ret = ERR_NO_STREAM;
 		goto end;
 	}
-
+	print_track_info(ifmt);
 	dump_metadata(ifmt);
 	ret = save_cover_art(ifmt, out_cover_name);
 

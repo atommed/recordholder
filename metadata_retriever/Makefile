@@ -1,2 +1,2 @@
 analyzer: analyzer.c
-	gcc -o analyzer analyzer.c -lavformat -lavcodec -lavutil
+	gcc -Werror -Wall -Wextra -Wpedantic -o analyzer analyzer.c -lavformat -lavcodec -lavutil
