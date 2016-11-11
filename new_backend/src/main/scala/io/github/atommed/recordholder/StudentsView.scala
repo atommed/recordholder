@@ -24,10 +24,10 @@ class StudentsView {
 	def execute : Unit = {
     val newStudent = new Student(rnd.nextString(5))
     studentDao.save(newStudent)
-		FacesContext.getCurrentInstance().addMessage(
-			null, 
-			new FacesMessage(FacesMessage.SEVERITY_INFO,"Done!", newStudent.id.toString)
-		)
+    FacesContext.getCurrentInstance().addMessage(
+        null, 
+        new FacesMessage(FacesMessage.SEVERITY_INFO,newStudent.id.toString, newStudent.name)
+    )
 		
 	}
 }
