@@ -1,6 +1,7 @@
 name := "RecordHolder"
 scalaVersion := "2.12.0"
 
+resolvers += "primefaces" at "http://repository.primefaces.org"
 libraryDependencies += "javax" % "javaee-api" % "7.0" % "provided"
 //libraryDependencies += "org.apache.myfaces.core" % "myfaces-api" % "2.2.11"
 //libraryDependencies += "org.apache.myfaces.core" % "myfaces-impl" % "2.2.11"
