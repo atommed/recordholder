@@ -30,7 +30,7 @@ class RegistrationView extends Serializable {
   }
 
   def logIn() : String = dBAuthBean.authenticate(login,password) match {
-    case Some(user) => "index"
+    case Some(user) => "good"
     case None => "bad"
   }
 
