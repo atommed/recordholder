@@ -9,7 +9,7 @@ import scala.beans.BeanProperty
 
 @Entity
 @Table
-class DBAuth{
+class DBAuth extends Serializable {
   @Id @BeanProperty var login: String = _
   @BeanProperty var passwordHash: Array[Byte] = _
   @BeanProperty var salt: Array[Byte] = _

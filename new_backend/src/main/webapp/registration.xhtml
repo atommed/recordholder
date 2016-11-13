@@ -22,6 +22,8 @@
             <p:commandButton value="Register" ajax="false" icon="ui-icon-check" action="#{registrationView.register}" />
             <p:commandButton value="Login"    ajax="false" icon="ui-icon-check" action="#{registrationView.logIn}" />
 
+            <h:outputLabel value="#{registrationView.login}" />
+            <h:outputLabel value="#{registrationView.password}" />
         </p:panelGrid>
     </h:form>
     <p:dataTable id="table" var="auth_data" value="#{registrationView.auths}">

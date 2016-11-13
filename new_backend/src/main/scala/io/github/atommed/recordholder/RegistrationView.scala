@@ -2,8 +2,7 @@ package io.github.atommed.recordholder
 
 import java.awt.event.ActionEvent
 import javax.ejb.EJB
-import javax.enterprise.context.SessionScoped
-import javax.faces.bean.{ManagedBean, ViewScoped}
+import javax.faces.bean.{ManagedBean, SessionScoped}
 import javax.persistence.{EntityManager, PersistenceContext}
 
 import io.github.atommed.recordholder.beans.DBAuthBean
@@ -16,13 +15,15 @@ import scala.beans.BeanProperty
   */
 
 @ManagedBean
-@ViewScoped
-class RegistrationView extends Serializable {
-  @BeanProperty var login: String = ""
-  @BeanProperty var password: String = ""
+@SessionScoped
+class RegistrationView(
+  @BeanProperty var login: String,
+  @BeanProperty var password: String
+) extends Serializable {
   @EJB var dBAuthBean: DBAuthBean = _
 
   @PersistenceContext var em: EntityManager = _
+
   def getAuths = {
     val dbAuth = classOf[DBAuth]
     val q = em.getCriteriaBuilder.createQuery(dbAuth)
@@ -36,5 +37,9 @@ class RegistrationView extends Serializable {
 
   def register() : Unit = {
     dBAuthBean.register(login, password)
+  }
+  
+  def this() = {
+  this("","")
   }
 }
