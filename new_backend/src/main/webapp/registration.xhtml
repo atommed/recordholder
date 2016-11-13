@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>RecordHolder registration</title>
+</h:head>
+
+<h:body>
+    <h:form>
+        <p:panelGrid columns="2">
+            <h:outputLabel for="login" value="Login:" style="font-weight:bold" />
+            <p:inputText id="login" value="#{registrationView.login}" />
+
+            <h:outputLabel for="password" value="Password:" style="font-weight:bold" />
+            <p:inputText id="password" value="#{registrationView.password}" />
+
+            <p:commandButton value="Register" ajax="false" icon="ui-icon-check" action="#{registrationView.register}" />
+            <p:commandButton value="Login"    ajax="false" icon="ui-icon-check" action="#{registrationView.logIn}" />
+
+        </p:panelGrid>
+    </h:form>
+    <p:dataTable id="table" var="auth_data" value="#{registrationView.auths}">
+        <p:column headerText="login"><h:outputText value="#{auth_data.login}"/></p:column>
+        <p:column headerText="hash"><h:outputText value="#{auth_data.prettyHash()}"/></p:column>
+    </p:dataTable>
+</h:body>
+</html>

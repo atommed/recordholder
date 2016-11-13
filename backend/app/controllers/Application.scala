@@ -12,7 +12,10 @@ class Application @Inject()(implicit system: ActorSystem, materializer: Material
   private var i: Int = 0
 
   def index = Action {
-    Ok("It works!")
+    Ok("It works!").withSession(
+      "lol" -> "kek",
+      "hoho" -> "Dead Moroze"
+    )
   }
 
   def other(info: String) = TODO
