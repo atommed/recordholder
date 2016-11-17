@@ -145,7 +145,7 @@ public class MetadataRetriever {
             return errorLog;
         }
 
-        public boolean exitSuccesfully() {
+        public boolean isExitSuccesfully() {
             return exitCode == 0 || exitCode == 1;
         }
 
