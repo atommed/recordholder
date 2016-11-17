@@ -3,4 +3,4 @@ frontend/public_html/
 /target/
 backend/.idea/
 .log
-new_backend/src/main/resources/natives/analyzer
+metadata-analyzer/analyzer
