@@ -14,19 +14,19 @@
     <h:form>
         <p:panelGrid columns="2">
             <h:outputLabel for="login" value="Login:" style="font-weight:bold" />
-            <p:inputText id="login" value="#{registrationView.login}" />
+            <p:inputText id="login" value="#{authenticationView.login}" />
 
             <h:outputLabel for="password" value="Password:" style="font-weight:bold" />
-            <p:inputText id="password" value="#{registrationView.password}" />
+            <p:inputText id="password" value="#{authenticationView.password}" />
 
-            <p:commandButton value="Register" ajax="false" icon="ui-icon-check" action="#{registrationView.register}" />
-            <p:commandButton value="Login"    ajax="false" icon="ui-icon-check" action="#{registrationView.logIn}" />
+            <p:commandButton value="Register" ajax="false" icon="ui-icon-check" action="#{authenticationView.register}" />
+            <p:commandButton value="Login"    ajax="false" icon="ui-icon-check" action="#{authenticationView.logIn}" />
 
-            <h:outputLabel value="#{registrationView.login}" />
-            <h:outputLabel value="#{registrationView.password}" />
+            <h:outputLabel value="#{authenticationView.login}" />
+            <h:outputLabel value="#{authenticationView.password}" />
         </p:panelGrid>
     </h:form>
-    <p:dataTable id="table" var="auth_data" value="#{registrationView.auths}">
+    <p:dataTable id="table" var="auth_data" value="#{authenticationView.auths}">
         <p:column headerText="login"><h:outputText value="#{auth_data.login}"/></p:column>
         <p:column headerText="hash"><h:outputText value="#{auth_data.prettyHash()}"/></p:column>
     </p:dataTable>

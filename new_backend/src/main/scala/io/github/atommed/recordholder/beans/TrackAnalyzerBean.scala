@@ -15,12 +15,15 @@ import io.github.atommed.recordholder.util.MetadataRetriever
 
 @Stateless
 class TrackAnalyzerBean {
-  @Resource(lookup="java:/recordholder/config/paths/analyzer-executable") var executablePath: String = _
-  var analyzer: MetadataRetriever = _
-  var workDir: Path = _
+  @Resource(lookup="java:/recordholder/config/paths/analyzer-executable")
+  private var executablePath: String = _
+  private var analyzer: MetadataRetriever = _
+  private var workDir: Path = _
+
+  def getMetaData(track: File) = analyzer.extractMetadata(track)
 
   @PostConstruct
-  def init() = {
+  private def init() = {
     workDir = Files.createTempDirectory("metadata_analyzer-wd")
     analyzer = new MetadataRetriever(Paths.get(executablePath))
   }
