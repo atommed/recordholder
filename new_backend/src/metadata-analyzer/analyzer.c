@@ -3,9 +3,18 @@
 
 #include <libavformat/avformat.h>
 
-#define ERR_NO_STREAM (3)
-#define ERR_BAD_USAGE (2)
-#define OK_NO_COVER_STREAM (1)
+enum STATUS_CODES {
+ST_OK = 0,
+ST_NO_COVER_STREAM = 1,
+LIBAV_ERROR,
+ERR_OPEN_FILE,
+ERR_AVCONTEXT_FAIL,
+ERR_STREAM_FAIL,
+ERR_NO_AUDIO_STREAM,
+ERR_BAD_USAGE
+};
+
+static int libav_error;
 
 
 /**
@@ -62,32 +71,35 @@ int save_cover_art(AVFormatContext* ifmt,char *filename){
 					AVMEDIA_TYPE_VIDEO,
 					-1,-1,NULL, 0)) < 0){
 		fputs("Can't find cover stream\n", stderr);
-		ret = OK_NO_COVER_STREAM;
+		ret = ST_NO_COVER_STREAM;
 		goto end;
 	}
 	in_stream = ifmt->streams[cover_stream_id];
 	avformat_alloc_output_context2(&ofmt, NULL, NULL, filename);
 	if(!ofmt){
 		fputs("Can't create ouptut context\n", stderr);
-		ret = AVERROR_UNKNOWN;
+		ret = ERR_AVCONTEXT_FAIL;
 		goto end;
 	}
-	if((ret = avio_open(&ofmt->pb, filename, AVIO_FLAG_WRITE)) < 0){
+	if((libav_error = avio_open(&ofmt->pb, filename, AVIO_FLAG_WRITE)) < 0){
 		fprintf(stderr, "Can't open input file %s\n", filename);
+                ret = LIBAV_ERROR;
 		goto end;
 	}
 
 	if(!(out_stream = avformat_new_stream(ofmt, in_stream->codec->codec))){
 		fputs("Can't alloc output stream\n", stderr);
-		ret = AVERROR_UNKNOWN;
+		ret = ERR_STREAM_FAIL;               
 		goto end;
 	}
-	if((ret = avcodec_copy_context(out_stream->codec, in_stream->codec))< 0){
+	if((libav_error = avcodec_copy_context(out_stream->codec, in_stream->codec))< 0){
 		fputs("Can't copy codec context\n", stderr);
+                ret = LIBAV_ERROR;
 		goto end;
 	}
-	if((ret = avformat_write_header(ofmt, NULL)) < 0){
+	if((libav_error = avformat_write_header(ofmt, NULL)) < 0){
 		fputs("Can't write cover\n", stderr);
+                ret = LIBAV_ERROR;
 		goto end;
 	}
 
@@ -100,7 +112,7 @@ int save_cover_art(AVFormatContext* ifmt,char *filename){
 	av_interleaved_write_frame(ofmt, &pkt);
 	av_packet_unref(&pkt);
 	av_write_trailer(ofmt);
-	ret = 0;
+	ret = ST_OK;
 
 end:
 	if(ofmt)
@@ -121,7 +133,7 @@ void print_track_info(AVFormatContext* fmt){
 int main(int argc, char **argv){
 	AVFormatContext *ifmt = NULL;
 	char *file_name, *out_cover_name;
-	int ret = EXIT_SUCCESS;
+	int ret;
 
 	/*Check input args*/
 	if(argc != 3){
@@ -136,17 +148,19 @@ int main(int argc, char **argv){
 	av_register_all();
 
 	/*Create context*/
-	if((ret = avformat_open_input(&ifmt, file_name, NULL, NULL)) < 0){
+	if((libav_error = avformat_open_input(&ifmt, file_name, NULL, NULL)) < 0){
 		fprintf(stderr, "Can't open input file %s\n", file_name);
+                ret = LIBAV_ERROR;
 		goto end;
 	}
-	if((ret = avformat_find_stream_info(ifmt, NULL)) < 0){
+	if((libav_error = avformat_find_stream_info(ifmt, NULL)) < 0){
 		fputs("Can't find stream info\n", stderr);
+                ret = LIBAV_ERROR;
 		goto end;
 	}
 	if(av_find_best_stream(ifmt, AVMEDIA_TYPE_AUDIO, -1, -1, NULL, 0) < 0){
 		fputs("Can't find audio stream in file\n", stderr);
-		ret = ERR_NO_STREAM;
+		ret = ERR_STREAM_FAIL;
 		goto end;
 	}
 	print_track_info(ifmt);

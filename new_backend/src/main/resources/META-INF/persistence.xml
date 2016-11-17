@@ -7,7 +7,7 @@
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value = "false"/>
             <property name="hibernate.format_sql" value = "false"/>
-            <property name="hibernate.connection.datasource" value="java:jboss/datasources/PostgreSQLDS"/>
+            <property name="hibernate.connection.datasource" value="jdbc/AppDB"/>
         </properties>
     </persistence-unit>
 </persistence>
