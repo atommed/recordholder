@@ -23,7 +23,7 @@ class DBAuthBean {
 
   @PersistenceContext private var em: EntityManager = _
 
-  @Resource(lookup = "config/security/pepper") private var pepper : String = _
+  @Resource(lookup = "java:/recordholder/config/security/pepper") private var pepper : String = _
   private val KDAlgorithm = "PBKDF2WithHmacSHA1"
   private val iterationCount = 2 << 16
   private val saltLength = 64

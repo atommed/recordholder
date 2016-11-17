@@ -15,7 +15,7 @@ import io.github.atommed.recordholder.util.MetadataRetriever
 
 @Stateless
 class TrackAnalyzerBean {
-  @Resource(lookup="config/paths/analyzer-executable") var executablePath: String = _
+  @Resource(lookup="java:/recordholder/config/paths/analyzer-executable") var executablePath: String = _
   var analyzer: MetadataRetriever = _
   var workDir: Path = _
 

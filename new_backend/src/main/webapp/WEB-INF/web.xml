@@ -6,23 +6,20 @@
 
     <resource-ref>
         <description>Database</description>
-        <res-ref-name>jdbc/AppDB</res-ref-name>
+        <res-ref-name>java:global/datasources/PostgreSQLDS</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
-        <lookup-name>java:jboss/datasources/PostgreSQLDS</lookup-name>
         <res-auth>Container</res-auth>
     </resource-ref>
     <resource-ref>
-        <res-ref-name>config/security/pepper</res-ref-name>
+        <res-ref-name>java:/recordholder/config/security/pepper</res-ref-name>
         <description>Used to create password hashes</description>
         <res-type>java.lang.String</res-type>
         <res-auth>Container</res-auth>
-        <lookup-name>recordholder/config/security/pepper</lookup-name>
     </resource-ref>
     <resource-ref>
         <description>metadata_analyzer executable</description>
-        <res-ref-name>config/paths/analyzer-executable</res-ref-name>
+        <res-ref-name>java:/recordholder/config/paths/analyzer-executable</res-ref-name>
         <res-type>java.lang.String</res-type>
-        <lookup-name>recordholder/config/paths/analyzer-executable</lookup-name>
     </resource-ref>
 
 
