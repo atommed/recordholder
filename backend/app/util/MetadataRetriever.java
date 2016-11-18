@@ -78,7 +78,7 @@ public class MetadataRetriever {
     public Result extractMetadata(File f)
             throws IOException, InterruptedException {
         String filePath = f.getAbsolutePath();
-        File cover = File.createTempFile("cover", "jpg");
+        File cover = File.createTempFile("cover", ".jpg");
         ProcessBuilder pb = new ProcessBuilder(executable, filePath, cover.getAbsolutePath());
         Process p = pb.start();
 
