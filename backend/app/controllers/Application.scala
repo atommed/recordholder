@@ -6,6 +6,6 @@ import play.api.mvc._
 
 class Application @Inject() extends Controller {
     def index = Action {
-      Ok("It works!")
+      Ok("It works hehe!")
     }
 }
