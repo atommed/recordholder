@@ -19,7 +19,7 @@ var output = document.getElementById("upload_result");
 form.addEventListener('submit', function(ev){
 	var oData = new FormData(form);
 	var req = new XMLHttpRequest();
-	req.open("POST", "api/fileUpload", true);
+	req.open("POST", "api/tracks/upload", true);
 	req.onload = function(ev){
 		if(req.status == 200)
 			output.innerHTML = req.response
