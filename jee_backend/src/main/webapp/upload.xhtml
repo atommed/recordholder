@@ -12,7 +12,7 @@
 <h:body>
     <h:form enctype="multipart/form-data">
         <p:growl id="messages" showDetail="true"/>
-        
+
         <p:fileUpload value="#{trackUploadView.file}" mode="simple" skinSimple="true" />
 
         <p:commandButton value="Submit" ajax="false" action="#{trackUploadView.upload}" />
