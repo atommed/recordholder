@@ -1,0 +1,5 @@
+@(CSRFForm : Form[CSRFData])(implicit  messages: Messages)
+
+@helper.form(action = routes.Application.csrf()){
+    @helper.inputText(CSRFForm("name"))
+}
