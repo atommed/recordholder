@@ -21,13 +21,14 @@ class TrackController @Inject()(db : Database, conf: Configuration) extends Cont
     override def initialValue() = new MetadataRetriever(analyzerExecutable)
   }
 
-  private def saveTrackToDB(name: String,
-                            extension: String,
-                            length: Double,
-                            bitrate: Long)
-                           (implicit conn: Connection) : Long = {
-    SQL"""INSERT INTO track(original_name, extension, length, bitrate)
-                      VALUES($name, $extension, $length, $bitrate)
+  private def saveTrackToDB(name: String, extension: String)
+                           (implicit result: util.MetadataRetriever.Result,
+                            conn: Connection) : Long = {
+    val length = result.getLength
+    val bitrate = result.getBitrate
+    val hasCover = result.getCover != null
+    SQL"""INSERT INTO track(original_name, extension, length, bitrate, has_cover)
+                      VALUES($name, $extension, $length, $bitrate, $hasCover)
        """.executeInsert(SqlParser.scalar[Long].single)
   }
 
@@ -38,7 +39,8 @@ class TrackController @Inject()(db : Database, conf: Configuration) extends Cont
       Files.move(cover.toPath, coversPath.resolve(idStr+".jpg"))
   }
 
-  private def saveTrackTags(id: Long, tags: Iterable[(String, String)])(implicit conn: Connection) = {
+  private def saveTrackTags(id: Long, tags: Iterable[(String, String)])
+                           (implicit conn: Connection) = {
     val tagParams = (for {
       (key, value) <- tags
     } yield Seq[NamedParameter](
@@ -50,12 +52,12 @@ class TrackController @Inject()(db : Database, conf: Configuration) extends Cont
 
   def upload = Action(parse.multipartFormData) {
     _.body.file(TrackController.TRACK_FIELD_NAME).map(track=> {
-      val result = analyzer.get().extractMetadata(track.ref.file)
+      implicit val result = analyzer.get().extractMetadata(track.ref.file)
       if(result.isExitSuccessful){
         db.withConnection(implicit conn => {
           val tags = result.getMetadata.asScala.map({case (key, value)=> (key.trim.toLowerCase, value.trim)})
           val extension = result.getPossibleExtensions()(0)
-          val id = saveTrackToDB(track.filename, extension, result.getLength, result.getBitrate)
+          val id = saveTrackToDB(track.filename, extension)
           saveTrackToFS(id, extension, track.ref, result.getCover)
           if(tags.nonEmpty) saveTrackTags(id, tags)
           Ok(s"Uploaded $id $tags!")
