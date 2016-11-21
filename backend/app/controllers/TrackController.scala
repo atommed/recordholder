@@ -21,13 +21,9 @@ class TrackController @Inject()(db : Database, conf: Configuration) extends Cont
     override def initialValue() = new MetadataRetriever(analyzerExecutable)
   }
 
-  def normalizeMetadata(metadata: Iterable[(String, String)]) : Iterable[(String,String)] = {
-    metadata map {case (key,value) => (key.trim.toLowerCase, value.trim)}
-  }
-
-  private def saveTrackToDB(length: Double, bitrate: Long)(implicit conn: Connection) : Long = {
-    SQL("INSERT INTO track(length, bitrate) values({length},{bitrate})")
-      .on("length" -> length, "bitrate" -> bitrate)
+  private def saveTrackToDB(name: String, length: Double, bitrate: Long)(implicit conn: Connection) : Long = {
+    SQL("INSERT INTO track(original_name, length, bitrate) values({name}, {length},{bitrate})")
+      .on("name" -> name, "length" -> length, "bitrate" -> bitrate)
       .executeInsert(SqlParser.scalar[Long].single)
   }
 
@@ -53,12 +49,12 @@ class TrackController @Inject()(db : Database, conf: Configuration) extends Cont
       val result = analyzer.get().extractMetadata(track.ref.file)
       if(result.isExitSuccessful){
         db.withConnection(implicit conn => {
-          val metadata = normalizeMetadata(result.getMetadata.asScala)
-          val id = saveTrackToDB(result.getLength, result.getBitrate)
+          val tags = result.getMetadata.asScala.map({case (key, value)=> (key.trim.toLowerCase, value.trim)})
+          val id = saveTrackToDB(track.filename, result.getLength, result.getBitrate)
           val extension = result.getPossibleExtensions()(0)
           saveTrackToFS(id, extension, track.ref, result.getCover)
-          if(metadata.nonEmpty) saveTrackTags(id, metadata)
-          Ok("Uploaded!")
+          if(tags.nonEmpty) saveTrackTags(id, tags)
+          Ok(s"Uploaded $id $tags!")
         })
       }
       else {
