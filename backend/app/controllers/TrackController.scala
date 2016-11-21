@@ -1,6 +1,8 @@
 package controllers
 
-import java.nio.file.{Files, Paths, StandardCopyOption}
+import java.io.File
+import java.nio.file.{Files, Paths}
+import java.sql.Connection
 import javax.inject.Inject
 
 import scala.collection.JavaConverters.mapAsScalaMapConverter
@@ -8,6 +10,7 @@ import play.api.Configuration
 import play.api.db.Database
 import play.api.mvc._
 import anorm._
+import play.api.libs.Files.TemporaryFile
 import util.MetadataRetriever
 
 class TrackController @Inject()(db : Database, conf: Configuration) extends Controller {
@@ -22,23 +25,46 @@ class TrackController @Inject()(db : Database, conf: Configuration) extends Cont
     metadata map {case (key,value) => (key.trim.toLowerCase, value.trim)}
   }
 
+  private def saveTrackToDB(length: Double, bitrate: Long)(implicit conn: Connection) : Long = {
+    SQL("INSERT INTO track(length, bitrate) values({length},{bitrate})")
+      .on("length" -> length, "bitrate" -> bitrate)
+      .executeInsert(SqlParser.scalar[Long].single)
+  }
+
+  private def saveTrackToFS(id: Long, track: TemporaryFile, cover: File) = {
+    val idStr = id.toString
+    track.moveTo(tracksPath.resolve(idStr).toFile)
+    if(cover != null)
+      Files.move(cover.toPath, coversPath.resolve(idStr))
+  }
+
+  private def saveTrackTags(id: Long, tags: Iterable[(String, String)])(implicit conn: Connection) = {
+    val tagParams = (for {
+      (key, value) <- tags
+    } yield Seq[NamedParameter](
+      "key" -> key, "value" -> value
+    )).toSeq
+    BatchSql(s"INSERT into tags (track_id, key, value) values ($id, {key}, {value})",
+      tagParams.head, tagParams.tail:_*).execute()
+  }
+
   def upload = Action(parse.multipartFormData) {
     _.body.file(TrackController.TRACK_FIELD_NAME).map(track=> {
       val result = analyzer.get().extractMetadata(track.ref.file)
       if(result.isExitSuccesfull){
         db.withConnection(implicit conn => {
-          val id = SQL("INSERT INTO track(length, bitrate) values({length},{bitrate})")
-            .on("length" -> result.getLength, "bitrate" -> result.getBitrate)
-            .executeInsert(SqlParser.scalar[Long].single)
-          val idStr = id.toString
-          track.ref.moveTo(tracksPath.resolve(idStr).toFile)
-          if(result.getCover != null)
-            Files.move(result.getCover.toPath, coversPath.resolve(idStr))
           val metadata = normalizeMetadata(result.getMetadata.asScala)
-          Ok(s"Uploaded $idStr<br>${metadata.mkString("<br>")}")
+          val id = saveTrackToDB(result.getLength, result.getBitrate)
+          saveTrackToFS(id, track.ref, result.getCover)
+          if(metadata.nonEmpty) saveTrackTags(id, metadata)
+          Ok("Uploaded!")
         })
       }
-      else BadRequest("Can't parse uploaded file as track")
+      else {
+        track.ref.file.delete()
+        Option(result.getCover).foreach(_.delete())
+        BadRequest("Can't parse uploaded file as track")
+      }
     }).getOrElse(
       BadRequest(s"Form must contain file in field ${TrackController.TRACK_FIELD_NAME}")
     )
