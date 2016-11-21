@@ -5,15 +5,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 
 
 public class MetadataRetriever {
-
     private final String executable;
-    private ByteBuffer byteBuffer = new ByteBuffer();
+    private final ByteBuffer byteBuffer = new ByteBuffer();
 
     public MetadataRetriever(Path executable) {
         this.executable = executable.toAbsolutePath().toString();
@@ -62,16 +62,17 @@ public class MetadataRetriever {
         return metadata;
     }
 
+    private void readPossibleExtensions(Result res, InputStream s) throws IOException{
+        String[] extensions = byteBuffer.readStreamToNewLine(s,StandardCharsets.UTF_8).split(",");
+        //TODO:Is this hack ok?
+        if(Arrays.asList(extensions).contains("mp3")) extensions = new String[]{"mp3"};
+        res.possibleExtensions = extensions;
+    }
+
     private void readLengthBitrate(Result res, InputStream s) throws IOException{
-        byteBuffer.clear();
-        int n;
-        while ((n=s.read()) != '\n'){
-            if(n == -1) throw new IllegalStateException("Stream ended while reading length&bitrait");
-            byteBuffer.put((byte) n);
-        }
-        String[] vals = byteBuffer.getString(StandardCharsets.UTF_8).split(" ");
-        res.length = Double.parseDouble(vals[0]);
-        res.bitrate = Long.parseLong(vals[1]);
+        String[] values = byteBuffer.readStreamToNewLine(s, StandardCharsets.UTF_8).split(" ");
+        res.length = Double.parseDouble(values[0]);
+        res.bitrate = Long.parseLong(values[1]);
     }
 
     //Extractor exit code 0 means everything is Ok, 1 means everything is ok but cover not found
@@ -94,6 +95,7 @@ public class MetadataRetriever {
         }
 
         if(res.exitCode == 0) res.cover = cover;
+        readPossibleExtensions(res, output);
         readLengthBitrate(res, output);
         res.metadata = getMetadata(output);
         return res;
@@ -103,6 +105,7 @@ public class MetadataRetriever {
         private double length; //In seconds
         private long bitrate; //In kb
         private Map<String, String> metadata;
+        private String[] possibleExtensions;
         private String errorLog;
         private int exitCode;
         private File cover;
@@ -115,7 +118,7 @@ public class MetadataRetriever {
             return errorLog;
         }
 
-        public boolean isExitSuccesfull() {
+        public boolean isExitSuccessful() {
             return exitCode == 0 || exitCode == 1;
         }
 
@@ -133,6 +136,10 @@ public class MetadataRetriever {
 
         public File getCover() {
             return cover;
+        }
+
+        public String[] getPossibleExtensions() {
+            return possibleExtensions;
         }
     }
 }

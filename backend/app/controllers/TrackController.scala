@@ -31,11 +31,11 @@ class TrackController @Inject()(db : Database, conf: Configuration) extends Cont
       .executeInsert(SqlParser.scalar[Long].single)
   }
 
-  private def saveTrackToFS(id: Long, track: TemporaryFile, cover: File) = {
+  private def saveTrackToFS(id: Long, extension: String, track: TemporaryFile, cover: File) = {
     val idStr = id.toString
-    track.moveTo(tracksPath.resolve(idStr).toFile)
+    track.moveTo(tracksPath.resolve(idStr+"."+extension).toFile)
     if(cover != null)
-      Files.move(cover.toPath, coversPath.resolve(idStr))
+      Files.move(cover.toPath, coversPath.resolve(idStr+".jpg"))
   }
 
   private def saveTrackTags(id: Long, tags: Iterable[(String, String)])(implicit conn: Connection) = {
@@ -44,18 +44,19 @@ class TrackController @Inject()(db : Database, conf: Configuration) extends Cont
     } yield Seq[NamedParameter](
       "key" -> key, "value" -> value
     )).toSeq
-    BatchSql(s"INSERT into tags (track_id, key, value) values ($id, {key}, {value})",
+    BatchSql(s"INSERT into tag (track_id, key, value) values ($id, {key}, {value})",
       tagParams.head, tagParams.tail:_*).execute()
   }
 
   def upload = Action(parse.multipartFormData) {
     _.body.file(TrackController.TRACK_FIELD_NAME).map(track=> {
       val result = analyzer.get().extractMetadata(track.ref.file)
-      if(result.isExitSuccesfull){
+      if(result.isExitSuccessful){
         db.withConnection(implicit conn => {
           val metadata = normalizeMetadata(result.getMetadata.asScala)
           val id = saveTrackToDB(result.getLength, result.getBitrate)
-          saveTrackToFS(id, track.ref, result.getCover)
+          val extension = result.getPossibleExtensions()(0)
+          saveTrackToFS(id, extension, track.ref, result.getCover)
           if(metadata.nonEmpty) saveTrackTags(id, metadata)
           Ok("Uploaded!")
         })

@@ -1,7 +1,7 @@
 # -- Create tracks table
 
 # --- !Ups
-create table track(
+CREATE TABLE track(
   id SERIAL
 );
 

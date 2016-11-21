@@ -121,6 +121,11 @@ end:
 	return ret;
 }
 
+/*Prints comma separated list of available extensions*/
+void print_available_extensions(AVFormatContext* fmt){
+	printf("%s\n", fmt->iformat->extensions);
+}
+
 /*Prints length in seconds and bitrate*/
 void print_track_info(AVFormatContext* fmt){
 	int best_audio_stream_id;
@@ -163,6 +168,7 @@ int main(int argc, char **argv){
 		ret = ERR_STREAM_FAIL;
 		goto end;
 	}
+	print_available_extensions(ifmt);
 	print_track_info(ifmt);
 	dump_metadata(ifmt);
 	ret = save_cover_art(ifmt, out_cover_name);

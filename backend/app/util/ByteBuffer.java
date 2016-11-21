@@ -33,4 +33,14 @@ public class ByteBuffer {
         }
         return getString(ch);
     }
+
+    public String readStreamToNewLine(InputStream s, Charset ch) throws IOException {
+        int n;
+        clear();
+        while((n=s.read()) != '\n'){
+            if(n == -1) throw new IllegalStateException("Stream ended but newline \\n expected");
+            put((byte) n);
+        }
+        return getString(ch);
+    }
 }
