@@ -12,8 +12,7 @@ import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
 const store = createStore(
   combineReducers({
     routing: routerReducer
-  }, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
-)
+  }), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
  
 // Create an enhanced history that syncs navigation events with the store 
 const history = syncHistoryWithStore(browserHistory, store)
