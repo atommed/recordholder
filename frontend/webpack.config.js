@@ -4,7 +4,7 @@ module.exports = {
     entry: './app/index.jsx',
     output: {
         filename: 'bundle.js',
-        path: './public_html'
+        path: '/var/www/recordholder/public_html'
     },
     module: {
         loaders: [{
