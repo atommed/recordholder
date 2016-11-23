@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    entry: './app/index.jsx',
+    entry: './app/index.js',
     output: {
         filename: 'bundle.js',
         path: '/var/www/recordholder/public_html'
@@ -13,7 +13,10 @@ module.exports = {
             loader: 'babel-loader',
             query: {
                 presets: ['es2015'],
-                plugins: ["transform-react-jsx", "transform-es2015-modules-amd"]
+                plugins: ["transform-react-jsx", 
+                          "transform-es2015-modules-amd",
+                          "transform-object-rest-spread",
+                          "transform-decorators-legacy"]
             }
         }, {
             test: /\.scss$/,
@@ -28,4 +31,4 @@ module.exports = {
             template: "./index.ejs",
         })
     ]
-}
+};
