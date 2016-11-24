@@ -1,1 +1,39 @@
-@import "~materialize-css/sass/materialize"
+@import "~materialize-css/sass/materialize.scss";
+
+$player-size: 60px;
+
+html, body{
+  min-height: 100%;
+  @extend .grey, .lighten-3;
+}
+
+#page {
+  @extend .grey, .lighten-3;
+  margin-bottom: $player-size;
+}
+
+footer{
+  position: fixed;
+  bottom: 0px;
+  height: $player-size;
+  width: 100%;
+  /*
+  left:0px;
+  background:#999;
+  */
+}
+
+.colored {
+  @extend .black-text, .yellow, .accent-3
+}
+
+.nav-wrapper{
+  @extend .yellow, .accent-3;
+}
+
+nav ul a {
+  @extend .black-text;
+}
+nav .brand-logo {
+  @extend .black-text;
+}

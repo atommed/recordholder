@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack')
 
 module.exports = {
     entry: './app/index.js',
@@ -24,11 +25,15 @@ module.exports = {
         }, {
             test: /\.(eot|svg|ttf|woff|woff2)$/,
             loader: "file"
+        }, {
+            test: /\.css$/,
+            loader: 'style!css?sourceMap'
         }]
     },
     plugins: [
         new HtmlWebpackPlugin({
             template: "./index.ejs",
+            title: "RecordHolder"
         })
     ]
 };

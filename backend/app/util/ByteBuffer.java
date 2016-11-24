@@ -21,7 +21,7 @@ public class ByteBuffer {
     }
 
     public String getString(Charset cs){
-        if(pos == -1) return null;
+        //if(pos == -1) return null;
         return new String(data, 0 , pos + 1, cs);
     }
 

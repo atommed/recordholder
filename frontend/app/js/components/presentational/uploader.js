@@ -1,11 +1,11 @@
 import React, {PropTypes} from 'react'
 
-class UploadForm extends React.Component{
+class Uploader extends React.Component{
     handleSubmit(ev){
         ev.preventDefault();
         const formData = new FormData(this.form);
         const req = new XMLHttpRequest();
-        req.open("POST", this.props.targetURL, true);
+        req.open("POST", "api/tracks/upload", true);
         req.onreadystatechange=()=>{
             if(req.readyState != 4) return;
             if(req.status == 200)
@@ -29,18 +29,25 @@ class UploadForm extends React.Component{
                   onSubmit={this.handleSubmit}
                   encType="multipart/form-data"
                   method="post">
-                <input type="file" required name="track"/>
-                <input type="submit" value="Upload file!"/>
+                <div className="file-field input-field">
+                    <div className="colored btn waves-effect">
+                        <span>Select track:</span>
+                        <input type="file" name="track" required />
+                    </div>
+                    <div className="file-path-wrapper">
+                        <input className="file-path validate" type="text" />
+                    </div>
+                </div>
+                <button style={{outline:"none"}} className="colored btn waves-effect" type="submit" >Upload!</button>
             </form>
         )
     }
 }
 
-UploadForm.propTypes={
-    onUploadSuccess: PropTypes.func,
-    onUploadFailure: PropTypes.func,
+Uploader.propTypes={
+    onUploadSuccess: PropTypes.func.isRequired,
+    onUploadFailure: PropTypes.func.isRequired,
     onUploadStarted: PropTypes.func,
-    targetURL: PropTypes.string.isRequired
 };
 
-export default UploadForm;
+export default Uploader;

@@ -1,4 +1,4 @@
-import UploadForm from './views/upload-form'
+import Uploader from './presentational/uploader'
 import {connect} from 'react-redux'
 import {trackUploadStart, trackUploadSuccess, trackUploadFailure} from '../actions'
 
@@ -16,6 +16,4 @@ function mapDispatchToProps(dispatch, ownProps){
     }
 }
 
-const Uploader = connect(null,mapDispatchToProps)(UploadForm);
-
-export default Uploader;
+export default connect(null,mapDispatchToProps)(Uploader);

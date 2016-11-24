@@ -44,7 +44,7 @@ server {
 
         
         location /storage {
-                root /var/www/recordholder/storage;
+                root /var/www/recordholder/;
                 try_files $uri =404;
         }
 }
