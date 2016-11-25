@@ -13,10 +13,10 @@ import {Provider, connect} from 'react-redux'
 import {Link, Router, Route, browserHistory} from 'react-router'
 import {syncHistoryWithStore, routerReducer} from 'react-router-redux'
 
+import TrackInfo from './js/components/track-info'
 import App from './js/components/presentational/app'
-import PlayButton from './js/components/play-button'
 import Uploader from './js/components/uploader'
-import Player from './js/components/player'
+
 import * as reducers from './js/reducers'
 
 const reduxDevToolsHack = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
@@ -48,7 +48,7 @@ ReactDOM.render(
             <Route path="/" component={App}>
                 <Route path="a" component={dummy("A!!!")}/>
                 <Route path="b" component={dummy("B!!!")}/>
-                <Route path="c" component={dummy("C!!!")}/>
+                <Route path="trackInfo" component={TrackInfo}/>
                 <Route path="uploader" component={Uploader}/>
             </Route>
         </Router>

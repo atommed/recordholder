@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -63,10 +64,7 @@ public class MetadataRetriever {
     }
 
     private void readPossibleExtensions(Result res, InputStream s) throws IOException{
-        String[] extensions = byteBuffer.readStreamToNewLine(s,StandardCharsets.UTF_8).split(",");
-        //TODO:Is this hack ok?
-        if(Arrays.asList(extensions).contains("mp3")) extensions = new String[]{"mp3"};
-        res.possibleExtensions = extensions;
+        res.possibleExtensions = byteBuffer.readStreamToNewLine(s,StandardCharsets.UTF_8).split(",");
     }
 
     private void readLengthBitrate(Result res, InputStream s) throws IOException{

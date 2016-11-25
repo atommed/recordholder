@@ -10,6 +10,7 @@ import play.api.Configuration
 import play.api.db.Database
 import play.api.mvc._
 import anorm._
+import play.api.libs.json.Json
 import play.api.libs.Files.TemporaryFile
 import util.MetadataRetriever
 
@@ -50,17 +51,35 @@ class TrackController @Inject()(db : Database, conf: Configuration) extends Cont
       tagParams.head, tagParams.tail:_*).execute()
   }
 
+  private def getExtension(possibleExtensions: Array[String]): String = {
+    val preferableExtensions = "ogg" :: "flac" :: "mp3" :: "m4a" :: Nil
+    val matchedPreferable = for{
+      extension <- preferableExtensions
+      if possibleExtensions.contains(extension)
+    } yield extension
+    matchedPreferable.headOption match {
+      case Some(extension) => extension;
+      case None => possibleExtensions(0)
+    }
+  }
+
   def upload = Action(parse.multipartFormData) {
     _.body.file(TrackController.TRACK_FIELD_NAME).map(track=> {
       implicit val result = analyzer.get().extractMetadata(track.ref.file)
       if(result.isExitSuccessful){
         db.withConnection(implicit conn => {
           val tags = result.getMetadata.asScala.map({case (key, value)=> (key.trim.toLowerCase, value.trim)})
-          val extension = result.getPossibleExtensions()(0)
+          val extension = getExtension(result.getPossibleExtensions)
           val id = saveTrackToDB(track.filename, extension)
           saveTrackToFS(id, extension, track.ref, result.getCover)
           if(tags.nonEmpty) saveTrackTags(id, tags)
-          Ok(s"Uploaded $id $tags!")
+
+          val json = Json.obj(
+            "id" -> id,
+            "extension" -> extension,
+            "tags" -> tags
+          )
+          Ok(json)
         })
       }
       else {

@@ -9,7 +9,7 @@ class Uploader extends React.Component{
         req.onreadystatechange=()=>{
             if(req.readyState != 4) return;
             if(req.status == 200)
-                this.props.onUploadSuccess(req.response);
+                this.props.onUploadSuccess(JSON.parse(req.response));
             else
                 this.props.onUploadFailure(req.status, req.response);
 

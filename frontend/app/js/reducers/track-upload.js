@@ -2,10 +2,10 @@ import {TRACK_UPLOAD_STARTED,TRACK_UPLOAD_SUCCEEDED, TRACK_UPLOAD_FAILED} from '
 
 function trackUploadResult(state="", action){
     switch (action.type){
-        case TRACK_UPLOAD_SUCCEEDED: return action.responseText;
-        case TRACK_UPLOAD_FAILED: return action.responseText;
-        case TRACK_UPLOAD_STARTED: return "Sending track to server...";
-        default: return state;
+        case TRACK_UPLOAD_SUCCEEDED: return action.responseText;break;
+        case TRACK_UPLOAD_FAILED: return action.responseText;break;
+        case TRACK_UPLOAD_STARTED: return "Sending track to server...";break;
+        default: return state;break;
     }
 }
 

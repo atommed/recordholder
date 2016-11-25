@@ -1,5 +1,7 @@
 import React from 'react'
 import {Link, IndexLink} from 'react-router'
+import Player from '../player'
+import TrackInfo from './track-info'
 
 class NavLink extends React.Component {
     render() {
@@ -28,20 +30,22 @@ class App extends React.Component {
                     <nav>
                         <div className="nav-wrapper">
                             <IndexLink to="" className="brand-logo right">
-                                <i className="mi mi-video-library"/>
+                                <i className="mi mi-library-music"/>
                                 RecordHolder
                             </IndexLink>
                             <ul className="left hide-on-med-and-down">
                                 <NavLink to="a">Ahrenet</NavLink>
                                 <NavLink to="b">Udevlen</NavLink>
-                                <NavLink to="c">Shokirovan</NavLink>
+                                <NavLink to="trackInfo">Track Info</NavLink>
                                 <NavLink to="uploader">Upload</NavLink>
                             </ul>
                         </div>
                     </nav>
                 </header>
                 <main className="container">{this.props.children}</main>
-                <footer>ABC</footer>
+                <footer>
+                    <Player src="storage/tracks/44.ogg"/>
+                </footer>
             </div>
         );
     }
