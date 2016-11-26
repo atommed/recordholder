@@ -72,7 +72,8 @@ class AuthController @Inject()(db: Database) extends Controller{
     val userPair = "user" -> login
     val token = Base64.getEncoder.encodeToString(rnd.genByes(128))
     val tokenPair = "token" -> token
-    Ok(status).withSession(userPair, tokenPair).withCookies(Cookie("token",token,httpOnly = false))
+    Ok(status).withSession(userPair, tokenPair).withCookies(Cookie("token",token,httpOnly = false,
+      maxAge = Some(60*60*24*31)))
   }
 
   def auth = Action { implicit request =>
