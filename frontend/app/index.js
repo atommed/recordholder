@@ -14,7 +14,7 @@ import {Link, Router, Route, browserHistory} from 'react-router'
 import {syncHistoryWithStore, routerReducer} from 'react-router-redux'
 
 import TrackInfo from './js/components/track-info'
-import App from './js/components/presentational/app'
+import App from './js/components/app'
 import Uploader from './js/components/uploader'
 
 import * as reducers from './js/reducers'

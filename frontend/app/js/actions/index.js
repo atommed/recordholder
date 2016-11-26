@@ -1,3 +1,4 @@
+export const TRACK_UPLOAD_STARTED = "TRACK_UPLOAD_STARTED";
 export const TRACK_UPLOAD_SUCCEEDED = "TRACK_UPLOAD_SUCCEEDED";
 export const TRACK_UPLOAD_FAILED = "TRACK_UPLOAD_FAILED";
 export const AUDIO_PAUSE_TOGGLED = "AUDIO_PAUSE_TOGGLED";
@@ -7,6 +8,8 @@ export const PLAYLIST_TRACK_NEXT = "PLAYLIST_TRACK_NEXT";
 export const PLAYLIST_TRACK_PREV = "PLAYLIST_TRACK_PREV";
 
 export const DB_TRACK_ADD = "DB_TRACK_ADD";
+
+export const AUTHENTICATED = "AUTHENTICATED";
 
 export function trackUploadSuccess(responseText){
     return {
@@ -53,4 +56,12 @@ export function addTrackToDB(track) {
 export function playListSkip(isForvard){
     const type = isForvard ? PLAYLIST_TRACK_NEXT : PLAYLIST_TRACK_PREV;
     return {type}
+}
+
+export function authenticate(id, token){
+    return {
+        type: AUTHENTICATED,
+        id,
+        token
+    }
 }

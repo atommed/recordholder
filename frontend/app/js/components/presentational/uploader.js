@@ -38,7 +38,10 @@ class Uploader extends React.Component{
                         <input className="file-path validate" type="text" />
                     </div>
                 </div>
-                <button style={{outline:"none"}} className="colored btn waves-effect" type="submit" >Upload!</button>
+                <button style={{outline:"none"}} className="colored btn waves-effect" type="submit" >
+                    <i className="material-icons">file_upload</i>
+                    Upload!
+                </button>
             </form>
         )
     }

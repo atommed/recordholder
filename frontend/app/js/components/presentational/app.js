@@ -2,6 +2,7 @@ import React from 'react'
 import {Link, IndexLink} from 'react-router'
 import Player from '../player'
 import TrackInfo from './track-info'
+import AuthForm from '../auth-form'
 
 class NavLink extends React.Component {
     render() {
@@ -23,6 +24,12 @@ NavLink.contextTypes = {
 };
 
 class App extends React.Component {
+    getMain(){
+        if(this.props.authentication.token !== undefined)
+            return this.props.children;
+        else return <AuthForm/>
+    }
+
     render() {
         return (
             <div id="page">
@@ -42,7 +49,7 @@ class App extends React.Component {
                         </div>
                     </nav>
                 </header>
-                <main className="container">{this.props.children}</main>
+                <main className="container">{this.getMain()}</main>
                 <footer>
                     <Player src="storage/tracks/44.ogg"/>
                 </footer>
