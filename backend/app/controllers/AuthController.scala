@@ -41,13 +41,13 @@ class AuthController @Inject()(db: Database) extends Controller{
     keyFactory.generateSecret(keySpec).getEncoded
   }
 
-  private def register(login: String, password: String): String ={
+  private def register(login: String, password: String): Unit={
     val salt = rnd.genByes(saltLength)
     val hash = genHash(salt, password)
     db.withConnection(implicit conn=>
       SQL"""
             INSERT INTO db_auth(login,passwordHash,salt) VALUES($login, $hash, $salt)
-        """.executeInsert(SqlParser.scalar[String].single)
+        """.executeInsert()
     )
   }
 
