@@ -24,8 +24,14 @@ NavLink.contextTypes = {
 };
 
 class App extends React.Component {
+    getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length == 2) return parts.pop().split(";").shift();
+    }
+
     getMain(){
-        if(this.props.authentication.token !== undefined)
+        if(this.getCookie("token") !== undefined)
             return this.props.children;
         else return <AuthForm/>
     }
