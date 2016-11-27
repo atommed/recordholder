@@ -47,7 +47,7 @@ class AuthController @Inject()(db: Database) extends Controller{
     db.withConnection(implicit conn=>
       SQL"""
             INSERT INTO db_auth(login,passwordHash,salt) VALUES($login, $hash, $salt)
-        """.executeInsert()
+        """.executeInsert(SqlParser.scalar[String].single) //TODO: Causes exception on h2
     )
   }
 
