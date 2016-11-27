@@ -8,29 +8,19 @@ html, body{
 }
 
 #page {
-  @extend .grey, .lighten-3;
   margin-bottom: $player-size;
-}
-
-footer{
-  position: fixed;
-  bottom: 0px;
-  height: $player-size;
-  width: 100%;
-  /*
-  left:0px;
-  background:#999;
-  */
 }
 
 .colored {
   @extend .black-text, .yellow, .accent-3
 }
 
-
+.btn > i {
+  vertical-align: middle;
+}
 
 .nav-wrapper{
-  @extend .yellow, .accent-3;
+  @extend .colored;
 }
 
 nav ul a {
@@ -40,28 +30,34 @@ nav .brand-logo {
   @extend .black-text;
 }
 
-.player-panel{
-  @extend  .yellow-text, .grey, .darken-3 , .text-accent-3
+.player-panel {
+  @extend  .grey, .darken-3 , .yellow-text, .text-accent-3;
+  padding: 0 5px;
+  position: fixed;
+  bottom: 0;
+  height: $player-size;
+  width: 100%;
+  display: flex;
+}
+
+.player-panel > * {
+  align-self: center;
 }
 
 .player-panel .coverArt {
   max-height: 90%;
-  margin-top: auto;
-  margin-bottom: auto;
 }
 
 .player-btn {
-  background-color: inherit;
-  height: 100%;
+  border: 0;
+  background: inherit;
+}
+
+.player-btn:focus {
+  background: inherit;
+}
+
+.player-btn > i {
   font-size: 48px;
-  border: none;
-}
-
-.player-btn:focus{
-  background-color: inherit;
-}
-
-.player-btn i {
-  font-size: inherit;
   vertical-align: middle;
 }

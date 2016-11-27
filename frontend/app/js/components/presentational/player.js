@@ -20,11 +20,11 @@ class Player extends React.Component {
 
     render() {
         return (
-            <div className="player-panel" style={{height: "100%"}}>
-                <img className="coverArt" src={this.props.coverSrc} />
+            <div className="player-panel">
                 <SkipPrevButton/>
                 <PlayButton />
                 <SkipNextButton/>
+                <img className="coverArt" src={this.props.coverSrc} />
                 <audio ref={(audio)=> {this.audio = audio;}}
                        src={this.props.src}>
                     Ur browser doesn't support HTML5 <code>audio</code> element =\

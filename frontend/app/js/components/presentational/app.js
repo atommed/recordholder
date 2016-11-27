@@ -25,40 +25,40 @@ NavLink.contextTypes = {
 
 class App extends React.Component {
     getCookie(name) {
-    var value = "; " + document.cookie;
-    var parts = value.split("; " + name + "=");
-    if (parts.length == 2) return parts.pop().split(";").shift();
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+        if (parts.length == 2) return parts.pop().split(";").shift();
     }
 
-    getMain(){
-        if(this.getCookie("token") !== undefined)
+    getMain() {
+        if (this.getCookie("token") !== undefined)
             return this.props.children;
         else return <AuthForm/>
     }
 
     render() {
         return (
-            <div id="page">
-                <header>
-                    <nav>
-                        <div className="nav-wrapper">
-                            <IndexLink to="" className="brand-logo right">
-                                <i className="mi mi-library-music"/>
-                                RecordHolder
-                            </IndexLink>
-                            <ul className="left hide-on-med-and-down">
-                                <NavLink to="a">Ahrenet</NavLink>
-                                <NavLink to="b">Udevlen</NavLink>
-                                <NavLink to="trackInfo">Track Info</NavLink>
-                                <NavLink to="uploader">Upload</NavLink>
-                            </ul>
-                        </div>
-                    </nav>
-                </header>
-                <main className="container">{this.getMain()}</main>
-                <footer>
-                    <Player src="storage/tracks/44.ogg"/>
-                </footer>
+            <div>
+                <div id="page">
+                    <header>
+                        <nav>
+                            <div className="nav-wrapper">
+                                <IndexLink to="" className="brand-logo right">
+                                    <i className="mi mi-library-music"/>
+                                    RecordHolder
+                                </IndexLink>
+                                <ul className="left hide-on-med-and-down">
+                                    <NavLink to="a">NotImpl1</NavLink>
+                                    <NavLink to="b">NotImpl2</NavLink>
+                                    <NavLink to="trackInfo">Track Info</NavLink>
+                                    <NavLink to="uploader">Upload</NavLink>
+                                </ul>
+                            </div>
+                        </nav>
+                    </header>
+                    <main className="container">{this.getMain()}</main>
+                </div>
+                <Player src="storage/tracks/44.ogg"/>
             </div>
         );
     }
