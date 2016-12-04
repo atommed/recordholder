@@ -9,12 +9,12 @@ import scala.collection.JavaConverters.mapAsScalaMapConverter
 import play.api.Configuration
 import play.api.db.Database
 import play.api.mvc._
-import anorm._
+//import anorm._
 import play.api.libs.json.Json
 import play.api.libs.Files.TemporaryFile
 import util.MetadataRetriever
 
-class TrackController @Inject()(db : Database, conf: Configuration) extends Controller {
+class TrackController @Inject()(conf: Configuration) extends Controller {
   val coversPath = Paths.get(conf.getString("storage.covers-path").get)
   val tracksPath = Paths.get(conf.getString("storage.tracks-path").get)
   val analyzerExecutable = Paths.get(conf.getString("ffmpeg-metadata-analyzer.executable").get)
@@ -28,9 +28,11 @@ class TrackController @Inject()(db : Database, conf: Configuration) extends Cont
     val length = result.getLength
     val bitrate = result.getBitrate
     val hasCover = result.getCover != null
-    SQL"""INSERT INTO track(original_name, extension, length, bitrate, has_cover)
+    /*SQL"""INSERT INTO track(original_name, extension, length, bitrate, has_cover)
                       VALUES($name, $extension, $length, $bitrate, $hasCover)
        """.executeInsert(SqlParser.scalar[Long].single)
+       */
+    42
   }
 
   private def saveTrackToFS(id: Long, extension: String, track: TemporaryFile, cover: File) = {
@@ -42,13 +44,14 @@ class TrackController @Inject()(db : Database, conf: Configuration) extends Cont
 
   private def saveTrackTags(id: Long, tags: Iterable[(String, String)])
                            (implicit conn: Connection) = {
-    val tagParams = (for {
+    /*val tagParams = (for {
       (key, value) <- tags
     } yield Seq[NamedParameter](
       "key" -> key, "value" -> value
     )).toSeq
     BatchSql(s"INSERT into tag (track_id, key, value) values ($id, {key}, {value})",
       tagParams.head, tagParams.tail:_*).execute()
+      */
   }
 
   private def getExtension(possibleExtensions: Array[String]): String = {
@@ -66,7 +69,7 @@ class TrackController @Inject()(db : Database, conf: Configuration) extends Cont
   def upload = Action(parse.multipartFormData) {
     _.body.file(TrackController.TRACK_FIELD_NAME).map(track=> {
       implicit val result = analyzer.get().extractMetadata(track.ref.file)
-      if(result.isExitSuccessful){
+      /*if(result.isExitSuccessful){
         db.withConnection(implicit conn => {
           val tags = result.getMetadata.asScala.map({case (key, value)=> (key.trim.toLowerCase, value.trim)})
           val extension = getExtension(result.getPossibleExtensions)
@@ -86,7 +89,8 @@ class TrackController @Inject()(db : Database, conf: Configuration) extends Cont
         track.ref.file.delete()
         Option(result.getCover).foreach(_.delete())
         BadRequest("Can't parse uploaded file as track")
-      }
+      }*/
+      Ok("lel")
     }).getOrElse(
       BadRequest(s"Form must contain file in field ${TrackController.TRACK_FIELD_NAME}")
     )

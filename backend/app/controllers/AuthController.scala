@@ -7,7 +7,6 @@ import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 import javax.inject.Inject
 
-import anorm._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.db.Database
@@ -18,7 +17,7 @@ import play.api.mvc._
   */
 
 
-class AuthController @Inject()(db: Database) extends Controller{
+class AuthController @Inject()() extends Controller{
   private val rnd = new SecureRandom()
   private val pepper : String = "testPepper" //TODO: Replace this!
   private val KDAlgorithm = "PBKDF2WithHmacSHA1"
@@ -44,23 +43,26 @@ class AuthController @Inject()(db: Database) extends Controller{
   private def register(login: String, password: String): Unit={
     val salt = rnd.genByes(saltLength)
     val hash = genHash(salt, password)
-    db.withConnection(implicit conn=>
-      SQL"""
+    //db.withConnection(implicit conn=>())
+      /*SQL"""
             INSERT INTO db_auth(login,passwordHash,salt) VALUES($login, $hash, $salt)
         """.executeInsert(SqlParser.scalar[String].single) //TODO: Causes exception on h2
-    )
+    )*/
   }
 
   case class AuthData(passwordHash: Array[Byte], salt: Array[Byte])
 
   private def passCorrect(login:String, password: String): Option[Boolean] = {
-    val resOpt = db.withConnection(implicit conn => {
-      val parser = Macro.namedParser[AuthData]
+    /*val resOpt =null db.withConnection(implicit conn => {
+      /*val parser = Macro.namedParser[AuthData]
       SQL"""
             SELECT passwordHash, salt FROM db_auth WHERE login=$login
         """.as(parser.singleOpt)
-    })
-    resOpt.map(res=>genHash(res.salt, password) sameElements res.passwordHash)
+        */
+      Some(null)
+    })*/
+    //resOpt.map(res=>genHash(res.salt, password) sameElements res.passwordHash)
+    Some(false)
   }
 
   val authForm = Form(tuple(
