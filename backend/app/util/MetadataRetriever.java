@@ -5,11 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 
 
 public class MetadataRetriever {
@@ -63,11 +60,11 @@ public class MetadataRetriever {
         return metadata;
     }
 
-    private void readPossibleExtensions(Result res, InputStream s) throws IOException{
-        res.possibleExtensions = byteBuffer.readStreamToNewLine(s,StandardCharsets.UTF_8).split(",");
+    private void readPossibleExtensions(Result res, InputStream s) throws IOException {
+        res.possibleExtensions = byteBuffer.readStreamToNewLine(s, StandardCharsets.UTF_8).split(",");
     }
 
-    private void readLengthBitrate(Result res, InputStream s) throws IOException{
+    private void readLengthBitrate(Result res, InputStream s) throws IOException {
         String[] values = byteBuffer.readStreamToNewLine(s, StandardCharsets.UTF_8).split(" ");
         res.length = Double.parseDouble(values[0]);
         res.bitrate = Long.parseLong(values[1]);
@@ -83,7 +80,7 @@ public class MetadataRetriever {
 
         Result res = new Result();
         res.exitCode = p.waitFor();
-        if(res.exitCode != 0) cover.delete();
+        if (res.exitCode != 0) cover.delete();
         else res.cover = cover;
         InputStream output = p.getInputStream();
 
@@ -92,7 +89,7 @@ public class MetadataRetriever {
             return res;
         }
 
-        if(res.exitCode == 0) res.cover = cover;
+        if (res.exitCode == 0) res.cover = cover;
         readPossibleExtensions(res, output);
         readLengthBitrate(res, output);
         res.metadata = getMetadata(output);
