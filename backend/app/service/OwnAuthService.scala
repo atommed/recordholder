@@ -9,10 +9,9 @@ import slick.driver.JdbcProfile
 import scala.concurrent.Future
 import service.components.{OwnAuthsComponent, UsersComponent}
 import models.{OwnAuth, User}
+import service.OwnAuthService.Credentials
 import util.AuthUtils
-
-import scala.util.{Random, Success, Try}
-
+import scala.util.Try
 
 @Singleton()
 class OwnAuthService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
@@ -24,9 +23,8 @@ class OwnAuthService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
   private val users = TableQuery[Users]
   private val ownAuths = TableQuery[OwnAuths]
 
-  case class Credentials(login: String, password: String)
-
-  def register(login: String, password: String) : Future[Try[User]] = {
+  def register(credentials: Credentials) : Future[Try[User]] = {
+    val (login, password) = (credentials.login, credentials.password)
     val salt = AuthUtils.genSalt()
     val hash = AuthUtils.genHash(salt, password)
     db run (for {
@@ -35,7 +33,8 @@ class OwnAuthService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
     } yield User(login, Some(uId))).asTry.transactionally
   }
 
-  def signIn(login: String, password: String) : Future[Option[User]] = {
+  def signIn(credentials: Credentials) : Future[Option[User]] = {
+    val (login, password) = (credentials.login, credentials.password)
     val userQ = for{
       auth <- ownAuths if auth.login === login.bind
       user <- users if user.id === auth.userId
@@ -47,4 +46,8 @@ class OwnAuthService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
       case _ => None
     }
   }
+}
+
+object OwnAuthService{
+  case class Credentials(login: String, password: String)
 }

@@ -1,6 +1,7 @@
-GET        /reg/:name/:password       controllers.Application.register(name, password)
-GET        /log/:name/:password       controllers.Application.signIn(name, password)
-POST        /jr                        controllers.Application.signInJSON()
+GET         /                          controllers.Application.index
+
+POST        /jl                        controllers.rest.OwnAuthController.signIn
+POST        /jr                        controllers.rest.OwnAuthController.signUp
 
 POST       /api/tracks/upload        controllers.TrackController.upload
 POST       /api/auth    controllers.AuthController.auth
