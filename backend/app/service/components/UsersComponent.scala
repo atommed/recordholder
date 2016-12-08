@@ -14,10 +14,8 @@ trait UsersComponent {
   import driver.api._
 
   class Users(tag: Tag) extends Table[User](tag, "users") {
-    def * = (name, id.?) <> (User.tupled, User.unapply)
-
-    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-
+    def * = (id.?, name) <> (User.tupled, User.unapply)
+    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name")
   }
 

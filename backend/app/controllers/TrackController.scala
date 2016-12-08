@@ -11,8 +11,8 @@ import play.api.mvc._
 import util.MetadataRetriever
 
 class TrackController @Inject()(conf: Configuration) extends Controller {
-  val coversPath = Paths.get(conf.getString("storage.covers-path").get)
-  val tracksPath = Paths.get(conf.getString("storage.tracks-path").get)
+//  val coversPath = Paths.get(conf.getString("storage.covers-path").get)
+//  val tracksPath = Paths.get(conf.getString("storage.tracks-path").get)
   val analyzerExecutable = Paths.get(conf.getString("ffmpeg-metadata-analyzer.executable").get)
   val analyzer = new ThreadLocal[MetadataRetriever] {
     override def initialValue() = new MetadataRetriever(analyzerExecutable)
@@ -63,9 +63,9 @@ class TrackController @Inject()(conf: Configuration) extends Controller {
 
   private def saveTrackToFS(id: Long, extension: String, track: TemporaryFile, cover: File) = {
     val idStr = id.toString
-    track.moveTo(tracksPath.resolve(idStr + "." + extension).toFile)
-    if (cover != null)
-      Files.move(cover.toPath, coversPath.resolve(idStr + ".jpg"))
+//    track.moveTo(tracksPath.resolve(idStr + "." + extension).toFile)
+    //if (cover != null)
+ //     Files.move(cover.toPath, coversPath.resolve(idStr + ".jpg"))
   }
 
   private def saveTrackTags(id: Long, tags: Iterable[(String, String)])
@@ -78,18 +78,6 @@ class TrackController @Inject()(conf: Configuration) extends Controller {
     BatchSql(s"INSERT into tag (track_id, key, value) values ($id, {key}, {value})",
       tagParams.head, tagParams.tail:_*).execute()
       */
-  }
-
-  private def getExtension(possibleExtensions: Array[String]): String = {
-    val preferableExtensions = "ogg" :: "flac" :: "mp3" :: "m4a" :: Nil
-    val matchedPreferable = for {
-      extension <- preferableExtensions
-      if possibleExtensions.contains(extension)
-    } yield extension
-    matchedPreferable.headOption match {
-      case Some(extension) => extension;
-      case None => possibleExtensions(0)
-    }
   }
 }
 

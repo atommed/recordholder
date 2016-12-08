@@ -29,9 +29,9 @@ class OwnAuthService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
     val salt = AuthUtils.genSalt()
     val hash = AuthUtils.genHash(salt, password)
     db run (for {
-      uId <- users returning users.map(_.id) += User(login)
+      uId <- users returning users.map(_.id) += User(name = login)
       _ <- ownAuths += OwnAuth(Some(uId), login, hash, salt)
-    } yield User(login, Some(uId))).asTry.transactionally
+    } yield User(Some(uId),login)).asTry.transactionally
   }
 
   def signIn(credentials: Credentials): Future[Option[User]] = {

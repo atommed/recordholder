@@ -11,13 +11,9 @@ trait OwnAuthsComponent {
 
   class OwnAuths(tag: Tag) extends Table[OwnAuth](tag, "own_auths") {
     def * = (userId.?, login, passwordHash, salt) <> (OwnAuth.tupled, OwnAuth.unapply)
-
-    def userId = column[Int]("user_id")
-
+    def userId = column[Long]("user_id")
     def login = column[String]("login", O.PrimaryKey)
-
     def passwordHash = column[Array[Byte]]("password_hash")
-
     def salt = column[Array[Byte]]("salt")
   }
 
