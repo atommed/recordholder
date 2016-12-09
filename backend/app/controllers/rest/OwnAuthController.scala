@@ -40,7 +40,7 @@ class OwnAuthController @Inject()(protected val authService: OwnAuthService) ext
 
   def LogIn(u: User)(implicit rh: RequestHeader) = {
     Ok(Json.toJson(u))
-      .withSession("userId" -> u.id.getOrElse(-1).toString)
+      .withSession("userId" -> u.id.toString)
       .protect
   }
 

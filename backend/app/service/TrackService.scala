@@ -4,10 +4,12 @@ import java.io.File
 import java.nio.file.Paths
 import javax.inject.{Inject, Singleton}
 
+import models.User
 import play.api.Configuration
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import service.components.TracksComponent
+import service.components._
 import slick.driver.JdbcProfile
+
 import scala.collection.JavaConverters.mapAsScalaMapConverter
 import util.MetadataRetriever
 
@@ -16,6 +18,10 @@ import util.MetadataRetriever
 class TrackService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, conf: Configuration)
   extends HasDatabaseConfigProvider[JdbcProfile]
     with TracksComponent
+    with UsersComponent
+    with UserAlbumsComponent
+    with UserArtistsComponent
+    with ArtistsComponent
 {
   import driver.api._
 
@@ -28,6 +34,10 @@ class TrackService @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   }
 
   private val tracks = TableQuery[Tracks]
+  private val users = TableQuery[Users]
+  private val userArtists = TableQuery[UserArtists]
+  private val userAlbums = TableQuery[UserAlbums]
+  val artists = TableQuery[Artists]
 
   private def getExtension(possibleExtensions: Array[String]): String = {
     val preferableExtensions = "ogg" :: "flac" :: "mp3" :: "m4a" :: Nil
@@ -41,10 +51,23 @@ class TrackService @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     }
   }
 
-  private def persistTrack(track: File) = {
+  def persistTrack(track: File, uploader: User) = {
     val metadata = analyzer.get().extractMetadata(track)
     val tags = metadata.getMetadata.asScala.map({case (key, value) => (key.trim.toLowerCase, value)})
     val extension = getExtension(metadata.getPossibleExtensions)
     val hasCover = metadata.getCover != null
+
+
+    
+
+    //userAlbums join albums
+    val albumQ = for{
+      userAlbum <- userAlbums if userAlbum.userId === uploader.id.bind
+      album <- userAlbum.album
+      userArtist <- userArtists if userArtist.userId === uploader.id.bind
+      artist <- userArtist.artist
+    } yield (artist, album)
+    albumQ.result.statements.foreach(println)
+    db.run(albumQ.result)
   }
 }

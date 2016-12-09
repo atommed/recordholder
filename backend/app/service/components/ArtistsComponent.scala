@@ -1,22 +1,21 @@
 package service.components
 
-import models.User
+import models.Artist
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.driver.JdbcProfile
 
 /**
-  * Created by gregory on 04.12.16.
+  * Created by gregory on 09.12.16.
   */
-
-trait UsersComponent {
+trait ArtistsComponent {
   this: HasDatabaseConfigProvider[JdbcProfile] =>
-
   import driver.api._
 
-  class Users(tag: Tag) extends Table[User](tag, "users") {
-    def * = (id, name) <> (User.tupled, User.unapply)
+  class Artists(tag: Tag) extends Table[Artist](tag, "artists"){
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name")
-  }
+    def description = column[Option[String]]("description")
 
+    def * = (id, name, description) <> (Artist.tupled, Artist.unapply)
+  }
 }

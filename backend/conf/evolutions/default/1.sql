@@ -19,11 +19,21 @@ CREATE TABLE artists(
   description TEXT
 );
 
+CREATE TABLE user_artists(
+  user_id BIGINT NOT NULL REFERENCES users(id),
+  artist_id BIGINT NOT NULL REFERENCES artists(id)
+);
+
 CREATE TABLE albums(
   id BIGSERIAL PRIMARY KEY,
   artist_id BIGINT REFERENCES artists(id),
   name TEXT,
   description TEXT
+);
+
+CREATE TABLE user_albums(
+  user_id BIGINT NOT NULL REFERENCES users(id),
+  album_id BIGINT NOT NULL REFERENCES albums(id)
 );
 
 CREATE TABLE tracks(
@@ -63,14 +73,16 @@ CREATE TABLE playlist_tracks(
   id SERIAL PRIMARY KEY,
   playlist_id BIGINT NOT NULL REFERENCES playlists(id),
   track_id BIGINT NOT NULL REFERENCES tracks(id),
-  after BIGINT NOT NULL REFERENCES playlist_tracks(id)
+  after BIGINT REFERENCES playlist_tracks(id)
 );
 
 #--!Downs
 DROP TABLE users CASCADE;
 DROP TABLE own_auths;
 DROP TABLE artists CASCADE;
+DROP TABLE user_artists;
 DROP TABLE albums CASCADE;
+DROP TABLE user_albums;
 DROP TABLE tracks CASCADE;
 DROP TABLE tags;
 DROP TABLE collection_tracks;
