@@ -21,7 +21,8 @@ CREATE TABLE artists(
 
 CREATE TABLE user_artists(
   user_id BIGINT NOT NULL REFERENCES users(id),
-  artist_id BIGINT NOT NULL REFERENCES artists(id)
+  artist_id BIGINT NOT NULL REFERENCES artists(id),
+  UNIQUE (user_id, artist_id)
 );
 
 CREATE TABLE albums(
@@ -33,7 +34,8 @@ CREATE TABLE albums(
 
 CREATE TABLE user_albums(
   user_id BIGINT NOT NULL REFERENCES users(id),
-  album_id BIGINT NOT NULL REFERENCES albums(id)
+  album_id BIGINT NOT NULL REFERENCES albums(id),
+  UNIQUE (user_id, album_id)
 );
 
 CREATE TABLE tracks(
@@ -66,7 +68,8 @@ CREATE TABLE playlists(
 
 CREATE TABLE user_playlists(
   user_id BIGINT NOT NULL REFERENCES users(id),
-  playlist_id BIGINT NOT NULL REFERENCES playlists(id)
+  playlist_id BIGINT NOT NULL REFERENCES playlists(id),
+  UNIQUE (user_id, playlist_id)
 );
 
 CREATE TABLE playlist_tracks(

@@ -56,7 +56,7 @@ class TrackService @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   }
 
 
-  private def existingAlbumQ(uploaderId: Rep[Long], albumName: Rep[String]) = {
+  private def existingAlbum1Q(uploaderId: Rep[Long], albumName: Rep[String]) = {
     userAlbums join albums on (_.albumId === _.id) joinLeft artists on {
       case ((user, album), artist) => album.artistId === artist.id
     } filter {
@@ -66,13 +66,27 @@ class TrackService @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     }
   }
 
-  private val existingAlbumC = Compiled(existingAlbumQ _)
+
+  private def existingAlbumQ(uploader: Rep[Long], albumName: Rep[String], artistName: Rep[String]) = {
+    userAlbums join albums on (_.albumId === _.id) joinLeft artists on {
+      case ((_, album), artist) => album.artistId === artist.id
+    } filter {case ((user,album), _) => album.name === albumName && user.userId === uploader } sortBy {
+      case ((_,_), artist) =>
+        ((artist.isEmpty || artist.map(_.name === artistName)).desc, artist.isEmpty)
+    } map {case ((_,album), artist) => (album.name, artist.map(_.name))  }
+  }
+
+  private val existingAlbumC = Compiled(existingAlbum1Q _)
 
   def persistTrack(track: File, uploader: User) = {
     val metadata = analyzer.get().extractMetadata(track)
     val tags = metadata.getMetadata.asScala.map({case (key, value) => (key.trim.toLowerCase, value)})
     val extension = getExtension(metadata.getPossibleExtensions)
     val hasCover = metadata.getCover != null
+
+    albums.filter(_.artistId.isDefined)
+
+    existingAlbumQ(1l.bind, "al", "ar1n").result.statements.foreach(println)
 
     val q1 = tags.get("album") match {
       case Some(tagAlbum) =>
