@@ -15,7 +15,7 @@ import util.MetadataRetriever
 class TrackController @Inject()(trackService: TrackService, conf: Configuration) extends Controller {
   def upload = Action(parse.multipartFormData) {
     _.body.file(TrackController.TRACK_FIELD_NAME).map(track => {
-      trackService.persistTrack(track.ref.file, User(0, "kek"))
+      trackService.persistTrack(track.ref.file,track.filename, User(0, "kek"))
       Ok("good start")
     }).getOrElse(Ok("bad start"))
   }

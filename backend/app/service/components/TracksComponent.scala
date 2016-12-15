@@ -21,9 +21,9 @@ trait TracksComponent extends AlbumsComponent with ArtistsComponent {
 
     def extension = column[String]("extension")
 
-    def length = column[Float]("length")
+    def length = column[Double]("length")
 
-    def bitrate = column[Int]("bitrate")
+    def bitrate = column[Long]("bitrate")
 
     def hasCover = column[Boolean]("has_cover")
 

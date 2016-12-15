@@ -133,6 +133,8 @@ public class MetadataRetriever {
             return cover;
         }
 
+        public boolean hasCover() {return cover != null;}
+
         public String[] getPossibleExtensions() {
             return possibleExtensions;
         }
