@@ -1,5 +1,4 @@
 GET         /                          controllers.Application.index
-GET         /csrf                          controllers.rest.OwnAuthController.testCsrf
 
 POST        /jl                        controllers.rest.OwnAuthController.signIn
 POST        /jr                        controllers.rest.OwnAuthController.signUp

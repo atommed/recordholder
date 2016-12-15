@@ -31,9 +31,12 @@ class App extends React.Component {
     }
 
     getMain() {
-        if (this.getCookie("token") !== undefined)
+        /*
+        if (this.props.authentication)
             return this.props.children;
         else return <AuthForm/>
+        */
+        return this.props.children;
     }
 
     render() {

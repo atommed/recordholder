@@ -1,6 +1,6 @@
 package models
 
-case class User(id : Long = -1, name: String)
+case class User(id : Long, name: String)
 case class OwnAuth(userId: Long, login: String, passwordHash: Array[Byte], salt: Array[Byte])
 case class Artist(id: Long, name: String, description: Option[String])
 case class Album(id: Long, artistId: Option[Long], name: String, description: Option[String])
