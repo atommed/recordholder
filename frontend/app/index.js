@@ -1,10 +1,7 @@
 require("./styles/style.scss");
-//require("materialize-css/sass/materialize.scss");
-//require('expose?$!expose?jQuery!jquery');
 require('material-icons/css/material-icons.css');
 require('materialize-css/dist/css/materialize.css');
 require('materialize-css/dist/js/materialize');
-//require("bootstrap-webpack");
 
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -26,13 +23,6 @@ const store = createStore(
         routing: routerReducer
     }), reduxDevToolsHack);
 const history = syncHistoryWithStore(browserHistory, store);
-
-
-
-@connect(state=>{return {text: state.trackUploadResult}})
-class Display extends React.Component{
-    render() {return <div>{this.props.text}</div>;}
-}
 
 function dummy(text){
     return function (props) {
