@@ -1,11 +1,11 @@
 import {AUTHENTICATED} from '../actions'
 
-function authentication(state = {}, action){
+function authentication(state = null, action){
     switch(action.type){
         case AUTHENTICATED:
             return {
-                id: action.id,
-                token: action.token
+                userId: action.userId,
+                roles: action.roles
             };
             break;
         default: return state; break;

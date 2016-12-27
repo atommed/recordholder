@@ -9,19 +9,27 @@ import {createStore, combineReducers} from 'redux'
 import {Provider, connect} from 'react-redux'
 import {Link, Router, Route, browserHistory} from 'react-router'
 import {syncHistoryWithStore, routerReducer} from 'react-router-redux'
+import * as Cookies from "js-cookie"
 
 import TrackInfo from './js/components/track-info'
 import App from './js/components/app'
 import Uploader from './js/components/uploader'
-
+import authenticate from './js/actions'
 import * as reducers from './js/reducers'
 
 const reduxDevToolsHack = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
+
 const store = createStore(
     combineReducers({
         ...reducers,
         routing: routerReducer
     }), reduxDevToolsHack);
+
+let auth = Cookies.get('auth');
+if(auth !== undefined){
+    store.dispatch(authenticate(auth.userId, auth.roles))
+}
+
 const history = syncHistoryWithStore(browserHistory, store);
 
 function dummy(text){
@@ -29,8 +37,6 @@ function dummy(text){
         return <div>{text}</div>;
     }
 }
-
-//TODO: FFMPEG returns mov extension for 28 days later theme
 
 ReactDOM.render(
     <Provider store={store}>

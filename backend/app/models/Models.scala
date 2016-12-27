@@ -15,3 +15,4 @@ case class Track(id: Long = -1,
 case class Tag(track_id: Long,tag: String, value: String)
 case class PlayList(id: Long, name: String)
 case class PlayListTrack(id: Long, playlistId: Long, trackId: Long, after: Option[Long])
+

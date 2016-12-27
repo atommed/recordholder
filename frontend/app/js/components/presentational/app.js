@@ -24,19 +24,9 @@ NavLink.contextTypes = {
 };
 
 class App extends React.Component {
-    getCookie(name) {
-        var value = "; " + document.cookie;
-        var parts = value.split("; " + name + "=");
-        if (parts.length == 2) return parts.pop().split(";").shift();
-    }
-
     getMain() {
-        /*
-        if (this.props.authentication)
-            return this.props.children;
+        if(this.props.authentication != null )return this.props.children;
         else return <AuthForm/>
-        */
-        return this.props.children;
     }
 
     render() {
@@ -61,7 +51,7 @@ class App extends React.Component {
                     </header>
                     <main className="container">{this.getMain()}</main>
                 </div>
-                <Player src="storage/tracks/44.ogg"/>
+                <Player />
             </div>
         );
     }

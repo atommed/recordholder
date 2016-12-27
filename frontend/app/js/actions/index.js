@@ -58,10 +58,10 @@ export function playListSkip(isForvard){
     return {type}
 }
 
-export function authenticate(id, token){
+export function authenticate(userId, roles){
     return {
         type: AUTHENTICATED,
-        id,
-        token
+        userId,
+        roles
     }
 }

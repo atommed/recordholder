@@ -1,6 +1,6 @@
-GET         /                          controllers.Application.index
+GET        /                        controllers.Application.index
 
-POST        /jl                        controllers.rest.OwnAuthController.signIn
-POST        /jr                        controllers.rest.OwnAuthController.signUp
+POST       /api/signIn              controllers.rest.OwnAuthController.signIn
+POST       /api/signUp              controllers.rest.OwnAuthController.signUp
 
-POST       /api/tracks/upload        controllers.TrackController.upload
+POST       /api/tracks/upload       controllers.rest.TrackUploadController.upload

@@ -3,42 +3,39 @@ package controllers.rest
 import javax.inject.{Inject, Singleton}
 
 import models.User
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
 import play.api.mvc._
 import service.OwnAuthService
 
-import scala.concurrent.Future
+import scala.util.{Failure, Success}
+import util.WebAuth.LogIn
 
 
 @Singleton
 class OwnAuthController @Inject()(protected val authService: OwnAuthService) extends Controller {
-
   private implicit val credentialsR = Json.reads[service.OwnAuthService.Credentials]
   private implicit val credentialsW = Json.writes[User]
 
-  def signIn = Action.async(parse.json) { implicit req =>
+  private val CantParse = BadRequest("Can't parse request")
+
+  def signIn = Action(parse.json) { implicit req =>
     credentialsR.reads(req.body).asOpt match {
-      case Some(credentials) => authService.signIn(credentials) map {
-        case Some(u) => LogIn(u)
-        case None => BadRequest(s"Can't sign in as ${credentials.login}")
-      }
-      case None => Future.successful(BadRequest("Can't parse request"))
+      case Some(credentials) =>
+        authService.signIn(credentials) map LogIn getOrElse BadRequest(s"Can't sign in as ${credentials.login}")
+      case None => CantParse
     }
   }
 
-  def LogIn(u: User)(implicit rh: RequestHeader) = {
-    Ok(Json.toJson(u))
-      .withSession("userId" -> u.id.toString)
-  }
-
-  def signUp = Action.async(parse.json) { implicit req =>
+  def signUp = Action(parse.json) { implicit req =>
     credentialsR.reads(req.body).asOpt match {
       case Some(credentials) =>
-        authService.register(credentials) map LogIn recover {
-          case OwnAuthService.UserExistsException(login) => BadRequest(s"user $login already exists")
+        authService.register(credentials) match {
+          case Success(u) =>
+            LogIn(u)
+          case Failure(OwnAuthService.UserExistsException(login)) =>
+            BadRequest(s"user $login already exists")
         }
-      case None => Future.successful(BadRequest("Can't parse request"))
+      case None => CantParse
     }
   }
 }

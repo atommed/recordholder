@@ -7,4 +7,5 @@ import play.api.mvc._
 
 class Application @Inject()() extends Controller {
   def index = Action(Ok("It works!"))
+  def grantCsrfToken =  Action(Ok("Token granted!"))
 }
