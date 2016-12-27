@@ -57,7 +57,7 @@ class AuthForm extends React.Component {
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col s3">
+                        <div className="col">
                         <button
                             onClick={this.handleSignIn}
                             className="colored waves-effect btn">
@@ -65,7 +65,7 @@ class AuthForm extends React.Component {
                             Sign In
                         </button>
                         </div>
-                        <div className="col s3">
+                        <div className="col">
                         <button
                             onClick={this.handleSignUp}
                             className="colored waves-effect btn">

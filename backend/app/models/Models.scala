@@ -3,7 +3,7 @@ package models
 case class User(id : Long, name: String)
 case class OwnAuth(userId: Long, login: String, passwordHash: Array[Byte], salt: Array[Byte])
 case class Artist(id: Long, name: String, description: Option[String])
-case class Album(id: Long, artistId: Option[Long], name: String, description: Option[String])
+case class Album(id: Long, artistId: Option[Long], name: String, description: Option[String], coverId: Option[Long])
 case class Track(id: Long = -1,
                  title: String = null,
                  originalName: String = null,

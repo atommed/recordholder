@@ -61,3 +61,18 @@ nav .brand-logo {
   font-size: 48px;
   vertical-align: middle;
 }
+
+.albums-box{
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.albums-box-element {
+  width: 200px !important;
+  height: 200px !important;
+  padding: 5px;
+}
+
+.albums-box-element > img {
+  max-width: 80%;
+}

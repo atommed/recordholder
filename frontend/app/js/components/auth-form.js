@@ -1,35 +1,27 @@
 import {connect} from 'react-redux'
 import AuthForm from './presentational/auth-form'
 import {authenticate} from '../actions'
-import {setAJAX} from "../util"
+import {ensuringCsrf} from "../util"
+import * as Cookies from 'js-cookie'
 
 function mapDispatchToProps(dispatch){
-    function ajaxLogIn(req){
-        if(req.readyState != 4) return;
-        if(req.status == 200) {
-            let u = JSON.parse(req.responseText);
-            dispatch(authenticate(u.id, []))
-        }
-    }
-
-    function requestLogin(req) {
-        req.onreadystatechange = ajaxLogIn(req);
-        setAJAX(req)
+    function handleLoginData(user){
+        Cookies.set('auth', user,{
+            expires: 365
+        });
+        dispatch(authenticate(user.id, user.name, []));
     }
 
     return {
         onSignIn: function(data){
-            console.log(data);
-            const req = new XMLHttpRequest();
-            req.open("POST", "/api/signIn", true);
-            requestLogin(req);
-            req.send(data);
+            ensuringCsrf(()=>{
+                $.postJson("/api/signIn", data).done(handleLoginData);
+            });
         },
         onSignUp: function (data) {
-            const req = new XMLHttpRequest();
-            req.open("POST", "/api/signUp");
-            requestLogin(req);
-            req.send(data)
+            ensuringCsrf(()=> {
+                $.postJson("/api/signUp", data).done(handleLoginData);
+            });
         }
     }
 }

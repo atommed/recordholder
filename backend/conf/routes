@@ -4,3 +4,10 @@ POST       /api/signIn              controllers.rest.OwnAuthController.signIn
 POST       /api/signUp              controllers.rest.OwnAuthController.signUp
 
 POST       /api/tracks/upload       controllers.rest.TrackUploadController.upload
+
+GET        /api/csrfToken           controllers.Application.grantCsrfToken
+
+GET        /api/collection/:userId/albums controllers.rest.CollectionController.albums(userId : Long)
+GET        /api/albums/:albumId controllers.rest.CollectionController.albumTracks(albumId : Long)
+
+GET        /api/collection/:userId/artists controllers.rest.CollectionController.artists(userId : Long)

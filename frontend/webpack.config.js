@@ -34,6 +34,9 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: "./index.ejs",
             title: "RecordHolder"
+        }),
+        new webpack.ProvidePlugin({
+            $: 'jquery'
         })
     ]
 };

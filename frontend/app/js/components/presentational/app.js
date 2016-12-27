@@ -41,8 +41,7 @@ class App extends React.Component {
                                     RecordHolder
                                 </IndexLink>
                                 <ul className="left hide-on-med-and-down">
-                                    <NavLink to="a">NotImpl1</NavLink>
-                                    <NavLink to="b">NotImpl2</NavLink>
+                                    <NavLink to={`collection/${this.props.authentication.userId}/albums`} >Albums</NavLink>
                                     <NavLink to="trackInfo">Track Info</NavLink>
                                     <NavLink to="uploader">Upload</NavLink>
                                 </ul>

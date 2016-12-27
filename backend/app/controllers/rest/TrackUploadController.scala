@@ -13,10 +13,10 @@ class TrackUploadController @Inject()(trackService: TrackUploadService, conf: Co
 
   def upload = Action(parse.multipartFormData) {implicit req=>
     val res = for {
-  //    userId <- getUserId
+      userId <- getUserId
       trackFile <- req.body.file(TrackUploadController.TRACK_FIELD_NAME)
     } yield {
-      val track = trackService.uploadTrack(trackFile.ref.file, trackFile.filename, 0)
+      val track = trackService.uploadTrack(trackFile.ref.file, trackFile.filename, userId)
       Ok(Json.toJson(track)(Json.writes[Track]))
     }
     res getOrElse BadRequest

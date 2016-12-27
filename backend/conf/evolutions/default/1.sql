@@ -27,6 +27,7 @@ CREATE TABLE user_artists(
 
 CREATE TABLE album (
   id BIGSERIAL PRIMARY KEY,
+  cover_id BIGINT,
   artist_id BIGINT REFERENCES artist(id),
   name TEXT,
   description TEXT

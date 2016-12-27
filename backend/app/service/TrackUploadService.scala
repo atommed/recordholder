@@ -55,9 +55,10 @@ class TrackUploadService @Inject()(db: Database, conf: Configuration) {
       artistId <- long("artist_id").?
       name <- str("name")
       description <- str("description").?
-    } yield Album(id, artistId, name, description)
+      coverId <- long("cover_id").?
+    } yield Album(id, artistId, name, description, coverId)
     SQL"""
-         SELECT id, artist_id, name, description
+         SELECT id, artist_id, name, description, cover_id
          FROM user_albums JOIN album ON user_albums.user_id = album.id
          WHERE user_albums.user_id = ${userId} AND album.name = ${name}
          ORDER BY album.artist_id NULLS FIRST
@@ -119,7 +120,13 @@ class TrackUploadService @Inject()(db: Database, conf: Configuration) {
          INSERT INTO user_albums(user_id, album_id) VALUES(${userId}, ${albumId})
        """
       .executeInsert()
-    Album(albumId, None, name, None)
+    Album(albumId, None, name, None, None)
+  }
+
+  private def addCoverToAlbum(albumId: Long, coverId: Long)(implicit c: Connection) = {
+    SQL"""
+         UPDATE album SET cover_id = ${coverId} WHERE id=${albumId} and cover_id IS NULL
+       """.executeUpdate()
   }
 
   private def getArtistOrCreate(userId: Long, name: String)(implicit c: Connection): Artist =
@@ -173,8 +180,10 @@ class TrackUploadService @Inject()(db: Database, conf: Configuration) {
         trackWithAlbumArtist
     }
     val trackId = addTrack(uploaderId, taggedTrack)
+    val insertedTrack = taggedTrack.copy(id = trackId)
+    if(insertedTrack.hasCover) insertedTrack.albumId.map(albumId=>addCoverToAlbum(albumId, trackId))
     Files.move(file.toPath, tracksPath.resolve(trackId.toString+"."+track.extension))
     Option(metadata.getCover).foreach(f => Files.move(f.toPath, coversPath.resolve(trackId.toString+".jpg")))
-    track.copy(id = trackId)
+    insertedTrack
   }
 }

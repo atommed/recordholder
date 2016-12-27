@@ -1,11 +1,17 @@
-function setContentType(req, ct){
-    req.setRequestHeader("Content-Type", ct);
-}
+import * as Cookies from 'js-cookie'
 
-function setAJAX(req, ct) {
-    setContentType(req,"application/json;charset=UTF-8")
+function ensuringCsrf(action) {
+    const token = Cookies.get("Csrf-Token");
+    if(token !== undefined) action();
+    else {
+        $.ajax({
+            url: "/api/csrfToken"
+        }).done(()=>{
+            action();
+        })
+    }
 }
 
 export {
-    setAJAX, setContentType
+    ensuringCsrf
 }

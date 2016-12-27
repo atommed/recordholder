@@ -1,11 +1,13 @@
 import React, {PropTypes} from 'react'
+import * as Cookies from 'js-cookie'
 
 class Uploader extends React.Component{
     handleSubmit(ev){
         ev.preventDefault();
         const formData = new FormData(this.form);
         const req = new XMLHttpRequest();
-        req.open("POST", "api/tracks/upload", true);
+        req.open("POST", "/api/tracks/upload", true);
+        req.setRequestHeader('Csrf-Token', Cookies.get('Csrf-Token'));
         req.onreadystatechange=()=>{
             if(req.readyState != 4) return;
             if(req.status == 200)

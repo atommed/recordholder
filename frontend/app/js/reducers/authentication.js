@@ -5,6 +5,7 @@ function authentication(state = null, action){
         case AUTHENTICATED:
             return {
                 userId: action.userId,
+                name: action.name,
                 roles: action.roles
             };
             break;
