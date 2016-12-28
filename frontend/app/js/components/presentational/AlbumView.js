@@ -12,8 +12,10 @@ class AlbumView extends React.Component{
     }
 
     loadData(props){
+        const albumId = this.props.params.albumId;
+        const url = albumId > 0 ? `/api/albums/${this.props.params.albumId}` : `api/collection/${-albumId}/unknownAlbum`;
         $.ajax({
-            url: `/api/albums/${this.props.params.albumId}`
+            url: url
         }).done(data=>{
             this.setState({tracks: data});
             data.map(this.props.saveTrack)

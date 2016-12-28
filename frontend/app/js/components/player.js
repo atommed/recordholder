@@ -21,7 +21,8 @@ function mapStateToProps(state){
     return {
         pause: state.audioPaused,
         src: getTrackSrc(track),
-        coverSrc: getTrackCover(track)
+        coverSrc: getTrackCover(track),
+        title: track ? track.title : null
     }
 }
 export default connect(mapStateToProps)(Player);

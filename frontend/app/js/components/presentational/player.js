@@ -29,6 +29,7 @@ class Player extends React.Component {
                        src={this.props.src}>
                     Ur browser doesn't support HTML5 <code>audio</code> element =\
                 </audio>
+                {this.props.title}
             </div>
         )
     }

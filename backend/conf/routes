@@ -7,6 +7,7 @@ POST       /api/tracks/upload       controllers.rest.TrackUploadController.uploa
 
 GET        /api/csrfToken           controllers.Application.grantCsrfToken
 
+GET        /api/collection/:userId/unknownAlbum controllers.rest.CollectionController.unknownAlbumTracks(userId: Long)
 GET        /api/collection/:userId/albums controllers.rest.CollectionController.albums(userId : Long)
 GET        /api/albums/:albumId controllers.rest.CollectionController.albumTracks(albumId : Long)
 

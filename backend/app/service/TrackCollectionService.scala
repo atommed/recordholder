@@ -2,6 +2,7 @@ package service
 
 import javax.inject.Inject
 
+import anorm.SqlParser.{bool, double, long, str}
 import anorm._
 import models.{Album, Artist, Track}
 import play.api.db.Database
@@ -37,19 +38,25 @@ class TrackCollectionService @Inject()(private val db: Database) {
       """.as(parser.*)
   }
 
+  private val trackParser = for{
+    id <- long("id")
+    title <- str("title")
+    originalName <- str("original_name")
+    extension <- str("extension")
+    length <- double("length")
+    bitrate <- long("bitrate")
+    hasCover <- bool("has_cover")
+  } yield Track(id, title, originalName, extension, length, bitrate, hasCover, None, None)
+
   def findAlbumTracks(albumId: Long): Seq[Track] = db.withConnection {implicit conn=>
-    import SqlParser._
-    val parser = for{
-      id <- long("id")
-      title <- str("title")
-      originalName <- str("original_name")
-      extension <- str("extension")
-      length <- double("length")
-      bitrate <- long("bitrate")
-      hasCover <- bool("has_cover")
-    } yield Track(id, title, originalName, extension, length, bitrate, hasCover, None, None)
     SQL"""
          SELECT * FROM track where album_id = ${albumId}
-       """.as(parser.*)
+       """.as(trackParser.*)
   }
+
+  def findeUnknownAlbumTracks(userId: Long) : Seq[Track] = db.withConnection(implicit conn=>{
+    SQL"""
+         SELECT * FROM user_tracks JOIN track ON user_tracks.track_id = track.id WHERE user_id =${userId}
+       """.as(trackParser.*)
+  })
 }

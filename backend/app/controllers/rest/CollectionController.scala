@@ -25,6 +25,12 @@ class CollectionController @Inject()(private val collection: TrackCollectionServ
     Ok(Json.toJson(artists))
   }
 
+  def unknownAlbumTracks(userId: Long) = Action {
+    implicit val writes = Json.writes[Track]
+    val tracks = collection.findeUnknownAlbumTracks(userId)
+    Ok(Json.toJson(tracks))
+  }
+
   def albumTracks(albumId: Long) = Action{
     implicit val writes = Json.writes[Track]
     val tracks = collection.findAlbumTracks(albumId)

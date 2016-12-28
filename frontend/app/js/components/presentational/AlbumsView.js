@@ -51,6 +51,7 @@ class AlbumsView extends React.Component{
         return (
             <div className="albums-box">
                 {this.listAlbums()}
+                {this.showAlbum({name: 'Unknown album', id: -this.props.params.userId})}
             </div>
         )
     }
