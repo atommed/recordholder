@@ -1,27 +1,38 @@
+require("./styles/style.scss");
+require('material-icons/css/material-icons.css');
 require('materialize-css/dist/css/materialize.css');
 require('materialize-css/dist/js/materialize');
-require('./style.scss');
 
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {createStore, combineReducers} from 'redux'
-import {Provider} from 'react-redux'
-import {Router, Route, hashHistory} from 'react-router'
+import {Provider, connect} from 'react-redux'
+import {Link, Router, Route, hashHistory} from 'react-router'
 import {syncHistoryWithStore, routerReducer} from 'react-router-redux'
 import * as Cookies from "js-cookie"
 
-import * as reducers from "./reducers"
-import {signInSuccess} from "./actions"
-import App from './components/App'
-import Uploader from "./components/Uploader"
+import AlbumsView from './js/components/presentational/AlbumsView'
+import TrackInfo from './js/components/track-info'
+import App from './js/components/app'
+import Uploader from './js/components/uploader'
+import AlbumView from './js/components/AlbumView'
+import {authenticate} from './js/actions'
+import * as reducers from './js/reducers'
+
 
 const reduxDevToolsHack = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
+
 const store = createStore(
     combineReducers({
-        routing: routerReducer,
-        ...reducers
-    }),
-    reduxDevToolsHack);
+        ...reducers,
+        routing: routerReducer
+    }), reduxDevToolsHack);
+
+const auth = Cookies.getJSON('auth');
+if(auth !== undefined){
+    store.dispatch(authenticate(auth.id, auth.name, []))
+}
+
 const history = syncHistoryWithStore(hashHistory, store);
 
 $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
@@ -38,14 +49,13 @@ $.postJson = function(url, data){
         dataType: 'json'
     })
 };
-
-const auth = Cookies.getJSON('auth');
-if(auth) store.dispatch(signInSuccess(auth.user));
-
 ReactDOM.render(
     <Provider store={store}>
         <Router history={history}>
             <Route path="/" component={App}>
+                <Route path="collection/:userId/albums" components={AlbumsView} />
+                <Route path="albums/:albumId" components={AlbumView} />
+                <Route path="trackInfo" component={TrackInfo}/>
                 <Route path="uploader" component={Uploader}/>
             </Route>
         </Router>

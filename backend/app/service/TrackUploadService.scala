@@ -139,8 +139,9 @@ class TrackUploadService @Inject()(db: Database, conf: Configuration) {
       addAlbum(userId, name)
     }
 
-  def uploadTrack(file: File, originalName: String, uploaderId: Long): Track = db.withConnection { implicit conn =>
+  def uploadTrack(file: File, originalName: String, uploaderId: Long): Option[Track] = db.withConnection { implicit conn =>
     val metadata = analyzer.get().extractMetadata(file)
+    if(!metadata.isExitSuccessful) return None
     val tags = metadata.getMetadata.asScala.map({ case (key, value) => (key.trim.toLowerCase, value) })
     val track = Track(
       title = tags.getOrElse("title", originalName),
@@ -184,6 +185,6 @@ class TrackUploadService @Inject()(db: Database, conf: Configuration) {
     if(insertedTrack.hasCover) insertedTrack.albumId.map(albumId=>addCoverToAlbum(albumId, trackId))
     Files.move(file.toPath, tracksPath.resolve(trackId.toString+"."+track.extension))
     Option(metadata.getCover).foreach(f => Files.move(f.toPath, coversPath.resolve(trackId.toString+".jpg")))
-    insertedTrack
+    Some(insertedTrack)
   }
 }

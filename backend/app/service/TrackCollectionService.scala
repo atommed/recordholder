@@ -56,7 +56,8 @@ class TrackCollectionService @Inject()(private val db: Database) {
 
   def findeUnknownAlbumTracks(userId: Long) : Seq[Track] = db.withConnection(implicit conn=>{
     SQL"""
-         SELECT * FROM user_tracks JOIN track ON user_tracks.track_id = track.id WHERE user_id =${userId}
+         SELECT * FROM user_tracks JOIN track ON user_tracks.track_id = track.id
+         WHERE user_id =${userId} AND track.album_id IS NULL
        """.as(trackParser.*)
   })
 }

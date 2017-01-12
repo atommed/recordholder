@@ -1,0 +1,103 @@
+@import "~materialize-css/sass/materialize";
+
+$player-size: 70px;
+
+html, body{
+  min-height: 100%;
+  @extend .grey, .lighten-3;
+}
+
+#page {
+  margin-bottom: $player-size;
+}
+
+.colored {
+  @extend .black-text, .yellow, .accent-3
+}
+
+.btn > i {
+  vertical-align: middle;
+}
+
+.nav-wrapper{
+  @extend .colored;
+}
+
+nav ul a {
+  @extend .black-text;
+}
+nav .brand-logo {
+  @extend .black-text;
+}
+
+.player-panel {
+  @extend  .grey, .darken-3 , .yellow-text, .text-accent-3;
+  padding: 0 5px;
+  position: fixed;
+  bottom: 0;
+  height: $player-size;
+  width: 100%;
+  display: flex;
+}
+
+.player-panel > * {
+  align-self: center;
+}
+
+.player-panel .coverArt {
+  max-height: 90%;
+}
+
+.player-btn {
+  border: 0;
+  background: inherit;
+}
+
+.player-btn:focus {
+  background: inherit;
+}
+
+.player-btn > i {
+  font-size: 48px;
+  vertical-align: middle;
+}
+.player-btn[disabled] > i {
+  @extend .grey-text;
+}
+
+.albums-box{
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.albums-box-element {
+  width: 200px !important;
+  height: 200px !important;
+  padding: 5px;
+}
+
+.albums-box-element > img {
+  max-width: 80%;
+}
+
+.player-track-info{
+  white-space: nowrap;
+}
+
+.player-slider{
+  width: 100%;
+  margin-left: 10px;
+}
+
+.player-slider-body{
+  width: 100%;
+  height:10px;
+  @extend .grey;
+  position: relative;
+}
+
+.player-slider-listened{
+  @extend .yellow;
+  position: absolute;
+  height: 10px;
+}

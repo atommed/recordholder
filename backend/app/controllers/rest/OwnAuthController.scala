@@ -33,7 +33,7 @@ class OwnAuthController @Inject()(protected val authService: OwnAuthService) ext
           case Success(u) =>
             LogIn(u)
           case Failure(OwnAuthService.UserExistsException(login)) =>
-            BadRequest(s"user $login already exists")
+            BadRequest(s"User $login already exists")
         }
       case None => CantParse
     }
